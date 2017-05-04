@@ -4,10 +4,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -15,6 +19,8 @@ import javax.persistence.TemporalType;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.snowball.SnowballPorterFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.AnalyzerDef;
@@ -63,6 +69,12 @@ public class Book {
 	@DateBridge(resolution = Resolution.DAY)
 	private Date publicationDate;
 
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "BOOK_REVIEW", joinColumns = @JoinColumn(name = "BOOK_ID"))
+	@Fetch(FetchMode.SELECT)
+	@IndexedEmbedded(depth = 1, includePaths = { "stars", "comments" })
+	private Set<BookReview> bookReviews;
+
 	public Book() {
 	}
 
@@ -110,5 +122,21 @@ public class Book {
 	public String toString() {
 		return "Book [id=" + id + ", title=" + title + ", subTitle=" + subTitle + ", authors=" + authors
 				+ ", publicationDate=" + publicationDate + "]";
+	}
+
+	public String getSubTitle() {
+		return subTitle;
+	}
+
+	public void setSubTitle(String subTitle) {
+		this.subTitle = subTitle;
+	}
+
+	public Set<BookReview> getBookReviews() {
+		return bookReviews;
+	}
+
+	public void setBookReviews(Set<BookReview> bookReviews) {
+		this.bookReviews = bookReviews;
 	}
 }

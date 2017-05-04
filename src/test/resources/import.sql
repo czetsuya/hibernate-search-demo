@@ -1,6 +1,8 @@
 INSERT INTO BOOK VALUES (0, '2007-06-26', '(Theory in Practice (O''Reilly))', 'Beautiful Code: Leading Programmers Explain How They Think');
 INSERT INTO AUTHOR VALUES (0, 'Greg Wilson');
 INSERT INTO BOOK_AUTHOR VALUES (0, 0);
+INSERT INTO BOOK_REVIEW VALUES ('Edward', 5, 'Theory is boring at first.');
+
 INSERT INTO AUTHOR VALUES (1, 'Andy Oram');
 INSERT INTO BOOK_AUTHOR VALUES (0, 1);
 INSERT INTO BOOK VALUES (1, '2007-06-01', '', 'Smart and Gets Things Done: Joel Spolsky''s Concise Guide to Finding the Best Technical Talent, Hardback: Joel Spolsky''s Concise Guide to Finding the Best Technical Talent');

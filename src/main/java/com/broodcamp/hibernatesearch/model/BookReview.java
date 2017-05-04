@@ -20,12 +20,12 @@ import com.broodcamp.hibernatesearch.strategy.FiveStarBoostStrategy;
 /**
  * @author czetsuya
  **/
-//@Embeddable
-//@AnalyzerDef(name = "bookReviewAnalyzer", charFilters = {
-//		@CharFilterDef(factory = HTMLStripCharFilterFactory.class) }, tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
-//				@TokenFilterDef(factory = StandardFilterFactory.class),
-//				@TokenFilterDef(factory = StopFilterFactory.class) })
-//@DynamicBoost(impl = FiveStarBoostStrategy.class)
+@Embeddable
+@AnalyzerDef(name = "bookReviewAnalyzer", charFilters = {
+		@CharFilterDef(factory = HTMLStripCharFilterFactory.class) }, tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
+				@TokenFilterDef(factory = StandardFilterFactory.class),
+				@TokenFilterDef(factory = StopFilterFactory.class) })
+@DynamicBoost(impl = FiveStarBoostStrategy.class)
 public class BookReview {
 
 	@Field

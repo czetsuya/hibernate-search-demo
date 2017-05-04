@@ -38,6 +38,8 @@ import org.junit.runner.RunWith;
 
 import com.broodcamp.hibernatesearch.model.Author;
 import com.broodcamp.hibernatesearch.model.Book;
+import com.broodcamp.hibernatesearch.model.BookReview;
+import com.broodcamp.hibernatesearch.strategy.FiveStarBoostStrategy;
 
 @RunWith(Arquillian.class)
 public class HibernateSearchTest {
@@ -50,7 +52,8 @@ public class HibernateSearchTest {
 	@Deployment
 	public static Archive<?> createTestArchive() {
 		return ShrinkWrap.create(WebArchive.class, "test.war")
-				.addClasses(Author.class, Book.class, Resources.class, StartupListener.class)
+				.addClasses(Author.class, Book.class, BookReview.class, Resources.class, StartupListener.class,
+						FiveStarBoostStrategy.class)
 				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
 				.addAsResource("import.sql", "import.sql").addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
 				// Deploy our test datasource
@@ -92,8 +95,8 @@ public class HibernateSearchTest {
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
-		org.apache.lucene.search.Query luceneQuery = qb.moreLikeThis().comparingFields("subTitle")
-				.toEntity(book).createQuery();
+		org.apache.lucene.search.Query luceneQuery = qb.moreLikeThis().comparingFields("subTitle").toEntity(book)
+				.createQuery();
 		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
 
 		// execute search
