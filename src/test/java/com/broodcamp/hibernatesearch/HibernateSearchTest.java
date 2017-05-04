@@ -16,7 +16,10 @@
  */
 package com.broodcamp.hibernatesearch;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -32,28 +35,33 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
+
+import com.broodcamp.hibernatesearch.model.Author;
+import com.broodcamp.hibernatesearch.model.Book;
 
 @RunWith(Arquillian.class)
 public class HibernateSearchTest {
 
-	@Deployment
-	public static Archive<?> createTestArchive() {
-		return ShrinkWrap.create(WebArchive.class, "test.war").addClasses(Author.class, Book.class, Resources.class)
-				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
-				.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-				// Deploy our test datasource
-				.addAsWebInfResource("test-ds.xml", "test-ds.xml");
-	}
-
-	@Inject
-	private Logger log;
+	private Logger log = Logger.getLogger(this.getClass().getName());
 
 	@Inject
 	private EntityManager em;
 
+	@Deployment
+	public static Archive<?> createTestArchive() {
+		return ShrinkWrap.create(WebArchive.class, "test.war")
+				.addClasses(Author.class, Book.class, Resources.class, StartupListener.class)
+				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
+				.addAsResource("import.sql", "import.sql").addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+				// Deploy our test datasource
+				.addAsWebInfResource("test-ds.xml", "test-ds.xml");
+	}
+
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testSimpleJPALuceneSearch() {
+		log.info("testSimpleJPALuceneSearch");
+
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		// create native Lucene query using the query DSL
@@ -62,14 +70,39 @@ public class HibernateSearchTest {
 		// or the Lucene programmatic API. The Hibernate Search DSL is
 		// recommended though
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
-		org.apache.lucene.search.Query query = qb.keyword().onFields("title", "subtitle", "authors.name")
-				.matching("Java rocks!").createQuery();
+		org.apache.lucene.search.Query luceneQuery = qb.keyword().onFields("title", "subTitle", "authors.name")
+				.matching("Programmers").createQuery();
 
 		// wrap Lucene query in a javax.persistence.Query
-		javax.persistence.Query persistenceQuery = fullTextEntityManager.createFullTextQuery(query, Book.class);
+		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
 
 		// execute search
-		List result = persistenceQuery.getResultList();
+		List<Book> result = (List<Book>) jpaQuery.getResultList();
+
+		log.info("Record found=" + result.size());
+		result.forEach(p -> log.info(p.toString()));
+
+		assertEquals(9, result.size());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testMoreLikeThis() {
+		Book book = em.find(Book.class, 14);
+		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
+
+		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
+		org.apache.lucene.search.Query luceneQuery = qb.moreLikeThis().comparingFields("subTitle")
+				.toEntity(book).createQuery();
+		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
+
+		// execute search
+		List<Book> result = (List<Book>) jpaQuery.getResultList();
+
+		log.info("Record found=" + result.size());
+		result.forEach(p -> log.info(p.toString()));
+
+		assertEquals(5, result.size());
 	}
 
 }

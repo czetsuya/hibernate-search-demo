@@ -6,15 +6,18 @@
 	version="1.0">
 
 	<persistence-unit name="hibernate-search-example">
+		<jta-data-source>java:jboss/datasources/hibernate-search-demoDS</jta-data-source>
 		<properties>
-			<property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
+			<property name="hibernate.show_sql" value="false" />
 
 			<!-- optional -->
 			<property name="hibernate.search.default.directory_provider"
-				value="filesystem" />
-			<property name="hibernate.search.default.directory_provider"
-				value="filesystem" />
+				value="infinispan" />
+			<property name="hibernate.search.infinispan.cache_jndiname"
+				value="java:jboss/infinispan/broodcampHibernateSearch" />
+			<!-- <property name="hibernate.search.default.directory_provider" -->
+			<!-- value="filesystem" /> -->
 			<property name="hibernate.search.default.indexBase" value="c:/temp/lucene/indexes" />
 		</properties>
 	</persistence-unit>

@@ -3,10 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
 	<!-- The datasource is bound into JNDI at this location. We reference this 
-		in META-INF/test-persistence.xml -->
-	<datasource jta="true"
-		jndi-name="java:jboss/datasources/hibernate-search-demoDS" pool-name="DemoPool"
-		enabled="true" use-java-context="true" use-ccm="false">
+		in META-INF/persistence.xml -->
+	<datasource jta="true" jndi-name="java:jboss/datasources/hibernate-search-demoDS"
+		pool-name="DemoPool" enabled="true" use-java-context="true" use-ccm="false">
 		<connection-url>jdbc:postgresql://localhost:5432/hibernatesearch</connection-url>
 		<driver-class>org.postgresql.Driver</driver-class>
 		<driver>postgresql</driver>
