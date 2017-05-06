@@ -3,6 +3,7 @@ package com.broodcamp.hibernatesearch.model;
 import javax.persistence.Embeddable;
 
 import org.apache.lucene.analysis.charfilter.HTMLStripCharFilterFactory;
+import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.standard.StandardFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
@@ -23,6 +24,7 @@ import com.broodcamp.hibernatesearch.strategy.FiveStarBoostStrategy;
 @Embeddable
 @AnalyzerDef(name = "bookReviewAnalyzer", charFilters = {
 		@CharFilterDef(factory = HTMLStripCharFilterFactory.class) }, tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
+				@TokenFilterDef(factory = LowerCaseFilterFactory.class),
 				@TokenFilterDef(factory = StandardFilterFactory.class),
 				@TokenFilterDef(factory = StopFilterFactory.class) })
 @DynamicBoost(impl = FiveStarBoostStrategy.class)
@@ -61,6 +63,11 @@ public class BookReview {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	@Override
+	public String toString() {
+		return "BookReview [username=" + username + ", stars=" + stars + ", comments=" + comments + "]";
 	}
 
 }

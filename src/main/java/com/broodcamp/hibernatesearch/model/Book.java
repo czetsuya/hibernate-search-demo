@@ -12,21 +12,28 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.lucene.analysis.charfilter.HTMLStripCharFilterFactory;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
+import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.snowball.SnowballPorterFilterFactory;
+import org.apache.lucene.analysis.standard.StandardFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.AnalyzerDef;
+import org.hibernate.search.annotations.Boost;
+import org.hibernate.search.annotations.CharFilterDef;
 import org.hibernate.search.annotations.DateBridge;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Parameter;
@@ -37,11 +44,16 @@ import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 
 @Entity
-@AnalyzerDef(name = "customanalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
-		@TokenFilterDef(factory = LowerCaseFilterFactory.class),
-		@TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = {
-				@Parameter(name = "language", value = "English") }) })
+@AnalyzerDef(name = "customanalyzer", charFilters = {
+		@CharFilterDef(factory = HTMLStripCharFilterFactory.class) }, tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
+				@TokenFilterDef(factory = StandardFilterFactory.class),
+				@TokenFilterDef(factory = StopFilterFactory.class),
+				@TokenFilterDef(factory = LowerCaseFilterFactory.class),
+				@TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = {
+						@Parameter(name = "language", value = "English") }) })
 @Indexed
+@Boost(2f)
+//@FullTextFilterDefs({ @FullTextFilterDef(name = "deviceName", impl = DeviceFilterFactory.class) })
 public class Book {
 
 	@Id
@@ -50,8 +62,9 @@ public class Book {
 	private Integer id;
 
 	@Column(name = "TITLE")
-	@Field(store = Store.YES)
+	@Fields({ @Field(store = Store.COMPRESS), @Field(name = "sorting_title", analyze = Analyze.NO) })
 	@Analyzer(definition = "customanalyzer")
+	@Boost(1.5f)
 	private String title;
 
 	@Column(name = "SUB_TITLE")
@@ -61,6 +74,7 @@ public class Book {
 
 	@IndexedEmbedded
 	@ManyToMany
+	@JoinTable(name = "BOOK_AUTHOR", joinColumns = @JoinColumn(name = "BOOK_ID", referencedColumnName = "ID"), inverseJoinColumns = @JoinColumn(name = "AUTHOR_ID", referencedColumnName = "ID"))
 	private Set<Author> authors = new HashSet<Author>();
 
 	@Temporal(TemporalType.DATE)
@@ -118,12 +132,6 @@ public class Book {
 		this.publicationDate = publicationDate;
 	}
 
-	@Override
-	public String toString() {
-		return "Book [id=" + id + ", title=" + title + ", subTitle=" + subTitle + ", authors=" + authors
-				+ ", publicationDate=" + publicationDate + "]";
-	}
-
 	public String getSubTitle() {
 		return subTitle;
 	}
@@ -138,5 +146,11 @@ public class Book {
 
 	public void setBookReviews(Set<BookReview> bookReviews) {
 		this.bookReviews = bookReviews;
+	}
+
+	@Override
+	public String toString() {
+		return "Book [id=" + id + ", title=" + title + ", subTitle=" + subTitle + ", authors=" + authors
+				+ ", publicationDate=" + publicationDate + ", bookReviews=" + bookReviews + "]";
 	}
 }
