@@ -18,6 +18,8 @@ package com.broodcamp.hibernatesearch;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -26,6 +28,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
+import org.hibernate.search.engine.ProjectionConstants;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
@@ -139,6 +142,26 @@ public class HibernateSearchTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
+	public void testMoreLikeThisProjection() {
+		log.info("testMoreLikeThisProjection");
+
+		Book book = em.find(Book.class, 14);
+		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
+
+		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
+		org.apache.lucene.search.Query luceneQuery = qb.moreLikeThis().comparingFields("title").toEntity(book)
+				.createQuery();
+		List<Object> result = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class)
+				.setProjection(ProjectionConstants.THIS, ProjectionConstants.SCORE).getResultList();
+
+		log.info("Record found=" + result.size());
+		result.forEach(p -> log.info(p.toString()));
+
+		assertEquals(5, result.size());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
 	public void testBookReview() {
 		log.info("testBookReview");
 
@@ -177,12 +200,14 @@ public class HibernateSearchTest {
 		log.info("Record found=" + result.size());
 		result.forEach(p -> log.info(p.toString()));
 
+		assertEquals(9, result.size());
+
 		// --
 
 		log.info("fuzzy weighted");
 
-		luceneQuery = qb.keyword().fuzzy().withEditDistanceUpTo(1).onFields("title").boostedTo(2).andField("subTitle")
-				.andField("authors.name").matching("\"Programmers\"").createQuery();
+		luceneQuery = qb.keyword().fuzzy().withEditDistanceUpTo(1).withPrefixLength(1).onFields("title").boostedTo(2)
+				.andField("subTitle").andField("authors.name").matching("\"Programmers\"").createQuery();
 
 		jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
 
@@ -192,6 +217,7 @@ public class HibernateSearchTest {
 		log.info("Record found=" + result.size());
 		result.forEach(p -> log.info(p.toString()));
 
+		assertEquals(10, result.size());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -215,9 +241,188 @@ public class HibernateSearchTest {
 		List<Book> result = (List<Book>) fullTextQuery.getResultList();
 
 		log.info("Record found=" + result.size());
-		result.forEach(p -> log.info(p.toString()));
+		result.forEach(p -> log.info(p.getTitle()));
 
 		assertEquals(4, result.size());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testWildCard() {
+		log.info("testWildCard");
+
+		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
+
+		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
+		org.apache.lucene.search.Query luceneQuery = qb.keyword().wildcard().onFields("title", "subTitle")
+				.matching("*theo*").createQuery();
+
+		// wrap Lucene query in a javax.persistence.Query
+		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
+
+		// execute search
+		List<Book> result = (List<Book>) jpaQuery.getResultList();
+
+		log.info("Record found=" + result.size());
+		result.forEach(p -> log.info(p.getTitle() + " " + p.getSubtitle()));
+
+		assertEquals(2, result.size());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testPhrase() {
+		log.info("testPhrase");
+
+		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
+
+		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
+		org.apache.lucene.search.Query luceneQuery = qb.phrase().onField("subTitle").sentence("best practices")
+				.createQuery();
+
+		// wrap Lucene query in a javax.persistence.Query
+		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
+
+		// execute search
+		List<Book> result = (List<Book>) jpaQuery.getResultList();
+
+		log.info("Record found=" + result.size());
+		result.forEach(p -> log.info(p.toString()));
+
+		assertEquals(1, result.size());
+
+		log.info("testPhrase");
+
+		// --
+		log.info("testPhrase withSlop");
+
+		luceneQuery = qb.phrase().withSlop(1).onField("subTitle").sentence("core pattern").createQuery();
+
+		// wrap Lucene query in a javax.persistence.Query
+		jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
+
+		// execute search
+		result = (List<Book>) jpaQuery.getResultList();
+
+		log.info("Record found=" + result.size());
+		result.forEach(p -> log.info(p.getSubtitle()));
+
+		assertEquals(1, result.size());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testStarred() {
+		log.info("testStarred");
+
+		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
+
+		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
+		org.apache.lucene.search.Query luceneQuery = qb.range().onField("bookReviews.stars").from(4).to(5)
+				.excludeLimit().createQuery();
+
+		// wrap Lucene query in a javax.persistence.Query
+		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
+
+		// execute search
+		List<Book> result = (List<Book>) jpaQuery.getResultList();
+
+		log.info("Record found=" + result.size());
+		result.forEach(p -> p.getBookReviews().forEach(q -> log.info("" + q.getStars())));
+
+		assertEquals(3, result.size());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testDateRangeAbove() {
+		log.info("testDateRangeAbove");
+
+		Calendar c = Calendar.getInstance();
+		c.set(2000, 01, 01);
+
+		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
+
+		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
+		org.apache.lucene.search.Query luceneQuery = qb.range().onField("publicationDate").above(c.getTime())
+				.createQuery();
+
+		// wrap Lucene query in a javax.persistence.Query
+		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
+
+		// execute search
+		List<Book> result = (List<Book>) jpaQuery.getResultList();
+
+		log.info("Record found=" + result.size());
+		result.forEach(p -> log.info("" + p.getPublicationDate()));
+
+		assertEquals(50, result.size());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testDateRangeBetween() {
+		log.info("testDateRangeBetween");
+
+		Calendar c = Calendar.getInstance();
+		c.set(2005, 01, 01);
+
+		Date from = c.getTime();
+
+		c.set(2010, 01, 01);
+		Date to = c.getTime();
+
+		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
+
+		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
+		org.apache.lucene.search.Query luceneQuery = qb.range().onField("publicationDate").from(from).to(to)
+				.createQuery();
+
+		// wrap Lucene query in a javax.persistence.Query
+		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
+
+		// execute search
+		List<Book> result = (List<Book>) jpaQuery.getResultList();
+
+		log.info("Record found=" + result.size());
+		result.forEach(p -> log.info("" + p.getPublicationDate()));
+
+		assertEquals(28, result.size());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testAndOr() {
+		log.info("testAndOr");
+
+		Calendar c = Calendar.getInstance();
+		c.set(2005, 01, 01);
+
+		Date from = c.getTime();
+
+		c.set(2010, 01, 01);
+		Date to = c.getTime();
+
+		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
+
+		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
+
+		org.apache.lucene.search.Query luceneQuery = qb.bool()
+				.must(qb.keyword().onField("subTitle").matching("java").createQuery())
+				.must(qb.keyword().onFields("title", "subTitle").matching("javascript").createQuery()).not()
+				.must(qb.range().onField("publicationDate").from(from).to(to).createQuery())
+				.must(qb.range().onField("bookReviews.stars").above(3).createQuery()).createQuery();
+
+		// wrap Lucene query in a javax.persistence.Query
+		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
+
+		// execute search
+		List<Book> result = (List<Book>) jpaQuery.getResultList();
+
+		log.info("Record found=" + result.size());
+		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubtitle() + " | " + p.getPublicationDate()));
+
+		assertEquals(2, result.size());
 	}
 
 }

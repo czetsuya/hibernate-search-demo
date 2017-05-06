@@ -28,7 +28,6 @@ INSERT INTO AUTHOR (id, name) VALUES (7, 'Erich Gamma');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (3, 7);
 INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (3, 'Kerri', 5, 'Good for beginners.');
 
-
 INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (4, '2001-04-01', '', 'Otherland IV: Sea of Silver Light');
 INSERT INTO AUTHOR (id, name) VALUES (8, 'Tad Williams');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (4, 8);
@@ -91,11 +90,14 @@ INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (18, 26);
 INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (19, '2003-10-01', 'Lonely Planet Travel Guides', 'Catalunya and the Costa Brava');
 INSERT INTO AUTHOR (id, name) VALUES (27, 'Damien Simonis');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (19, 27);
+
 INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (20, '2005-07-21', '', 'Java Puzzlers: Traps, Pitfalls, and Corner Cases');
 INSERT INTO AUTHOR (id, name) VALUES (28, 'Neal Gafter');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (20, 28);
 INSERT INTO AUTHOR (id, name) VALUES (29, 'Joshua Bloch');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (20, 29);
+INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (20, 'Shiva', 5, 'Why puzzle?');
+
 INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (21, '2008-01-01', '', 'Die Vermessung der Welt');
 INSERT INTO AUTHOR (id, name) VALUES (30, 'Daniel Kehlmann');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (21, 30);
@@ -263,11 +265,14 @@ INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (60, 90);
 INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (61, '1996-01-01', '', 'LaTeX, 3 Bde., Bd.1, Einf\374hrung');
 INSERT INTO AUTHOR (id, name) VALUES (91, 'Helmut Kopka');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (61, 91);
+
 INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (62, '2006-12-05', '', 'Java Persistence with Hibernate');
 INSERT INTO AUTHOR (id, name) VALUES (92, 'Gavin King');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (62, 92);
 INSERT INTO AUTHOR (id, name) VALUES (93, 'Christian Bauer');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (62, 93);
+INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (62, 'Kerri', 4, 'A good book.');
+
 INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (63, '2006-12-14', 'Pragmatic Programmers', 'Agile Web Development with Rails');
 INSERT INTO AUTHOR (id, name) VALUES (94, 'David Hansson ');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (63, 94);
