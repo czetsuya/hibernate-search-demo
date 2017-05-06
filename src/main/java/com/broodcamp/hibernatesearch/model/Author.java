@@ -5,7 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Facet;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.Store;
 
 @Entity
@@ -17,7 +20,9 @@ public class Author {
 	private Integer id;
 
 	@Column(name = "NAME")
-	@Field(store = Store.YES)
+	@Facet(forField = "name_facet")
+	@Fields({ @Field(name = "name", store = Store.YES, analyze = Analyze.YES),
+			@Field(name = "name_facet", store = Store.NO, analyze = Analyze.NO) })
 	private String name;
 
 	public Integer getId() {

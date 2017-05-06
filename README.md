@@ -19,3 +19,7 @@ wildfly.jpa.hibernate.search.module=org.hibernate.search.orm:5.7.0.Final
 
 The infinispan version bundled with Wildfly 10.1.0.Final will throw a missing class exception to resolved that we must download a specific infinispan bundle:
 infinispan-as-embedded-modules-8.2.6.Final.zip
+
+You can set the object retrieval in configuration:
+hibernate.search.query.object_lookup_method = second_level_cache
+hibernate.search.query.database_retrieval_method = query

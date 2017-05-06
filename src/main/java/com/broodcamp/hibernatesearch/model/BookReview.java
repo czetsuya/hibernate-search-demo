@@ -7,12 +7,15 @@ import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.standard.StandardFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.AnalyzerDef;
 import org.hibernate.search.annotations.CharFilterDef;
 import org.hibernate.search.annotations.DynamicBoost;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.NumericField;
+import org.hibernate.search.annotations.NumericFields;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 
@@ -33,8 +36,8 @@ public class BookReview {
 	@Field
 	private String username;
 
-	@Field
-	@NumericField
+	@Fields({ @Field(name = "stars", analyze = Analyze.YES) })
+	@NumericFields({ @NumericField(forField = "stars") })
 	private int stars;
 
 	@Field

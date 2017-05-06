@@ -16,6 +16,10 @@
 				value="infinispan" />
 			<property name="hibernate.search.infinispan.cache_jndiname"
 				value="java:jboss/infinispan/broodcampHibernateSearch" />
+			<property name="hibernate.search.query.object_lookup_method"
+				value="second_level_cache" />
+			<property name="hibernate.search.query.database_retrieval_method"
+				value="query" />
 			<!-- <property name="hibernate.search.default.directory_provider" -->
 			<!-- value="filesystem" /> -->
 			<property name="hibernate.search.default.indexBase" value="c:/temp/lucene/indexes" />

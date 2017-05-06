@@ -1,13 +1,13 @@
-INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (0, '2007-06-26', '(Theory in Practice (O''Reilly))', 'Beautiful Code: Leading Programmers Explain How They Think');
+INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (72, '2007-06-26', '(Theory in Practice (O''Reilly))', 'Beautiful Code: Leading Programmers Explain How They Think');
 INSERT INTO AUTHOR (id, name) VALUES (0, 'Greg Wilson');
 INSERT INTO AUTHOR (id, name) VALUES (1, 'Andy Oram');
-INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (0, 0);
-INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (0, 1);
-INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (0, 'Edward', 5, 'Theory is boring at first 5.');
-INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (0, 'Edward', 4, 'Theory is boring at first 4.');
-INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (0, 'Edward', 3, 'Theory is boring at first 3.');
-INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (0, 'Edward', 2, 'Theory is boring at first 2.');
-INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (0, 'Edward', 1, 'Theory is boring at first 1.');
+INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (72, 0);
+INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (72, 1);
+INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (72, 'Edward', 5, 'Theory is boring at first 5.');
+INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (72, 'Edward', 4, 'Theory is boring at first 4.');
+INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (72, 'Edward', 3, 'Theory is boring at first 3.');
+INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (72, 'Edward', 2, 'Theory is boring at first 2.');
+INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (72, 'Edward', 1, 'Theory is boring at first 1.');
 
 INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (1, '2007-06-01', '', 'Smart and Gets Things Done: Joel Spolsky''s Concise Guide to Finding the Best Technical Talent, Hardback: Joel Spolsky''s Concise Guide to Finding the Best Technical Talent');
 INSERT INTO AUTHOR (id, name) VALUES (2, 'Joel Spolsky');

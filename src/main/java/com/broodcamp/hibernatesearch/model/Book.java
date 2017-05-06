@@ -34,14 +34,20 @@ import org.hibernate.search.annotations.DateBridge;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Fields;
+import org.hibernate.search.annotations.FullTextFilterDef;
+import org.hibernate.search.annotations.FullTextFilterDefs;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Parameter;
 import org.hibernate.search.annotations.Resolution;
+import org.hibernate.search.annotations.SortableField;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TermVector;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
+
+import com.broodcamp.hibernatesearch.filter.BookNameFactory;
+import com.broodcamp.hibernatesearch.filter.BookReviewFilter;
 
 @Entity
 @AnalyzerDef(name = "customanalyzer", charFilters = {
@@ -53,7 +59,8 @@ import org.hibernate.search.annotations.TokenizerDef;
 						@Parameter(name = "language", value = "English") }) })
 @Indexed
 @Boost(2f)
-//@FullTextFilterDefs({ @FullTextFilterDef(name = "deviceName", impl = DeviceFilterFactory.class) })
+@FullTextFilterDefs({ @FullTextFilterDef(name = "bookReviewFilter", impl = BookReviewFilter.class),
+		@FullTextFilterDef(name = "bookNameFilter", impl = BookNameFactory.class) })
 public class Book {
 
 	@Id
@@ -65,6 +72,7 @@ public class Book {
 	@Fields({ @Field(store = Store.COMPRESS), @Field(name = "sorting_title", analyze = Analyze.NO) })
 	@Analyzer(definition = "customanalyzer")
 	@Boost(1.5f)
+	@SortableField
 	private String title;
 
 	@Column(name = "SUB_TITLE")
