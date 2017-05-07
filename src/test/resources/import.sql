@@ -1,4 +1,4 @@
-INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (72, '2007-06-26', '(Theory in Practice (O''Reilly))', 'Beautiful Code: Leading Programmers Explain How They Think');
+INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (72, '2007-06-26', '(Theory in Practice (O''Reilly))', 'Beautiful Code: Leading Programmers Explain How They Think', 500);
 INSERT INTO AUTHOR (id, name) VALUES (0, 'Greg Wilson');
 INSERT INTO AUTHOR (id, name) VALUES (1, 'Andy Oram');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (72, 0);
@@ -9,15 +9,15 @@ INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (72, 'Edward
 INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (72, 'Edward', 2, 'Theory is boring at first 2.');
 INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (72, 'Edward', 1, 'Theory is boring at first 1.');
 
-INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (1, '2007-06-01', '', 'Smart and Gets Things Done: Joel Spolsky''s Concise Guide to Finding the Best Technical Talent, Hardback: Joel Spolsky''s Concise Guide to Finding the Best Technical Talent');
+INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (1, '2007-06-01', '', 'Smart and Gets Things Done: Joel Spolsky''s Concise Guide to Finding the Best Technical Talent, Hardback: Joel Spolsky''s Concise Guide to Finding the Best Technical Talent', 599);
 INSERT INTO AUTHOR (id, name) VALUES (2, 'Joel Spolsky');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (1, 2);
 
-INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (2, '1998-11-30', '', 'R\344tsel der Kochkunst.');
+INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (2, '1998-11-30', '', 'R\344tsel der Kochkunst.', 200);
 INSERT INTO AUTHOR (id, name) VALUES (3, 'Herve This-Benckhard');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (2, 3);
 
-INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (3, '1995-03-14', '', 'Design patterns : elements of reusable object-oriented software');
+INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (3, '1995-03-14', '', 'Design patterns : elements of reusable object-oriented software', 1000);
 INSERT INTO AUTHOR (id, name) VALUES (4, 'Richard Helm');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (3, 4);
 INSERT INTO AUTHOR (id, name) VALUES (5, 'Ralph Johnson');
@@ -28,7 +28,7 @@ INSERT INTO AUTHOR (id, name) VALUES (7, 'Erich Gamma');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (3, 7);
 INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (3, 'Kerri', 5, 'Good for beginners.');
 
-INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (4, '2001-04-01', '', 'Otherland IV: Sea of Silver Light');
+INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (4, '2001-04-01', '', 'Otherland IV: Sea of Silver Light', 500);
 INSERT INTO AUTHOR (id, name) VALUES (8, 'Tad Williams');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (4, 8);
 INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (5, '2008-01-01', '', 'Feuchtgebiete');
@@ -57,14 +57,14 @@ INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (11, '2001-10-1
 INSERT INTO AUTHOR (id, name) VALUES (17, 'D Perkins');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (11, 17);
 
-INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (12, '2005-01-12', '', 'Lucene In Action');
+INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (12, '2005-01-12', '', 'Lucene In Action', 1000);
 INSERT INTO AUTHOR (id, name) VALUES (18, 'Otis Gospodnetic');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (12, 18);
 INSERT INTO AUTHOR (id, name) VALUES (19, 'Erik Hatcher');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (12, 19);
 INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (12, 'Kerri', 5, 'Interesting book.');
 
-INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (13, '1999-09-14', 'Yourdon Press computing series', 'Death March');
+INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (13, '1999-09-14', 'Yourdon Press computing series', 'Death March', 200);
 INSERT INTO AUTHOR (id, name) VALUES (20, 'Edward Yourdon');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (13, 20);
 INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (14, '2006-04-04', 'Pragmatic Programmers', 'Practices of an Agile Developer: Working in the Real World');
@@ -73,12 +73,12 @@ INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (14, 21);
 INSERT INTO AUTHOR (id, name) VALUES (22, 'Venkat Subramaniam');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (14, 22);
 
-INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (15, '2005-05-01', 'Barron''s Educational Series', '1001 Natural Wonders: You Must See Before You Die');
+INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (15, '2005-05-01', 'Barron''s Educational Series', '1001 Natural Wonders: You Must See Before You Die', 200);
 INSERT INTO AUTHOR (id, name) VALUES (23, 'Michael Bright');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (15, 23);
 INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (15, 'Carbuncle', 2, 'Not interesting.');
 
-INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (16, '1998-04-25', '', 'Guns, Germs and Steel: A short history of everybody for the last 13,000 years');
+INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (16, '1998-04-25', '', 'Guns, Germs and Steel: A short history of everybody for the last 13,000 years', 500);
 INSERT INTO AUTHOR (id, name) VALUES (24, 'Jared M. Diamond');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (16, 24);
 INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (17, '1986-04-01', '1st Series', 'Programmers at Work: Interviews');
@@ -91,23 +91,23 @@ INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (19, '2003-10-0
 INSERT INTO AUTHOR (id, name) VALUES (27, 'Damien Simonis');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (19, 27);
 
-INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (20, '2005-07-21', '', 'Java Puzzlers: Traps, Pitfalls, and Corner Cases');
+INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (20, '2005-07-21', '', 'Java Puzzlers: Traps, Pitfalls, and Corner Cases', 500);
 INSERT INTO AUTHOR (id, name) VALUES (28, 'Neal Gafter');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (20, 28);
 INSERT INTO AUTHOR (id, name) VALUES (29, 'Joshua Bloch');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (20, 29);
 INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (20, 'Shiva', 5, 'Why puzzle?');
 
-INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (21, '2008-01-01', '', 'Die Vermessung der Welt');
+INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (21, '2008-01-01', '', 'Die Vermessung der Welt', 200);
 INSERT INTO AUTHOR (id, name) VALUES (30, 'Daniel Kehlmann');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (21, 30);
 INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (21, 'Tonberry', 3, 'Need an English version.');
 
-INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (22, '1995-01-01', '', 'Logik f\374r Informatiker');
+INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (22, '1995-01-01', '', 'Logik f\374r Informatiker', 100);
 INSERT INTO AUTHOR (id, name) VALUES (31, 'Uwe Sch\366ning');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (22, 31);
 
-INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (23, '2007-04-17', '', 'The Children of Hurin');
+INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (23, '2007-04-17', '', 'The Children of Hurin', 1000);
 INSERT INTO AUTHOR (id, name) VALUES (32, 'J.R.R. Tolkien');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (23, 32);
 INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (23, 'Ifrit', 4, 'Amazing book..');

@@ -49,6 +49,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.broodcamp.hibernatesearch.bridge.BigDecimalNumericFieldBridge;
 import com.broodcamp.hibernatesearch.filter.BookNameFactory;
 import com.broodcamp.hibernatesearch.filter.BookReviewFactory;
 import com.broodcamp.hibernatesearch.filter.BookReviewFilter;
@@ -70,7 +71,7 @@ public class HibernateSearchTest {
 		return ShrinkWrap.create(WebArchive.class, "test.war")
 				.addClasses(Author.class, Book.class, BookReview.class, Resources.class, StartupListener.class,
 						FiveStarBoostStrategy.class, BookReviewFilter.class, BookReviewFactory.class,
-						BookNameFactory.class)
+						BookNameFactory.class, BigDecimalNumericFieldBridge.class)
 				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
 				.addAsResource("import.sql", "import.sql").addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
 				// Deploy our test datasource
@@ -560,7 +561,7 @@ public class HibernateSearchTest {
 		assertEquals(3, x.getCount());
 	}
 
-	// @Test
+	@Test
 	public void testRangeFacet() {
 		log.info("testRangeFacet");
 
@@ -570,6 +571,19 @@ public class HibernateSearchTest {
 		org.apache.lucene.search.Query luceneQuery = qb.all().createQuery();
 		FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
 
+		FacetingRequest priceFacet = qb.facet().name("priceFacetRequest").onField("price").range().below(500).from(500)
+				.to(1000).above(1000).orderedBy(FacetSortOrder.COUNT_DESC).includeZeroCounts(true)
+				.createFacetingRequest();
+
+		// retrieve facet manager and apply faceting request
+		FacetManager facetManager = fullTextQuery.getFacetManager();
+		facetManager.enableFaceting(priceFacet);
+
+		// retrieve the faceting results
+		List<Facet> facets = facetManager.getFacets("priceFacetRequest");
+		facets.forEach(p -> log.info(p.getValue() + " - " + p.getCount()));
+
+		assertEquals(3, facets.size());
 	}
 
 }

@@ -32,12 +32,14 @@ import org.hibernate.search.annotations.Boost;
 import org.hibernate.search.annotations.CharFilterDef;
 import org.hibernate.search.annotations.DateBridge;
 import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Facet;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.FullTextFilterDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.NumericField;
 import org.hibernate.search.annotations.Parameter;
 import org.hibernate.search.annotations.Resolution;
 import org.hibernate.search.annotations.SortableField;
@@ -96,6 +98,13 @@ public class Book {
 	@Fetch(FetchMode.SELECT)
 	@IndexedEmbedded(depth = 1, includePaths = { "stars", "comments" })
 	private Set<BookReview> bookReviews;
+
+	@Column(name = "PRICE")
+	@Facet
+	@Field(store = Store.YES, analyze = Analyze.NO)
+	@NumericField
+	// @FieldBridge(impl = BigDecimalNumericFieldBridge.class)
+	private Double price;
 
 	public Book() {
 	}
@@ -160,5 +169,13 @@ public class Book {
 	public String toString() {
 		return "Book [id=" + id + ", title=" + title + ", subTitle=" + subTitle + ", authors=" + authors
 				+ ", publicationDate=" + publicationDate + ", bookReviews=" + bookReviews + "]";
+	}
+
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
 	}
 }
