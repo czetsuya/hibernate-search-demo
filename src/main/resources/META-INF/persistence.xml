@@ -19,6 +19,7 @@
 			<!-- <property name="hibernate.search.default.directory_provider" -->
 			<!-- value="filesystem" /> -->
 			<property name="hibernate.search.default.indexBase" value="c:/temp/lucene/indexes" />
+<!-- 			<property name="wildfly.jpa.hibernate.search.module" value="org.hibernate.search.orm:5.7.1.Final"></property> -->
 		</properties>
 	</persistence-unit>
 </persistence>

@@ -73,11 +73,15 @@ public class HibernateSearchTest {
 						FiveStarBoostStrategy.class, BookReviewFilter.class, BookReviewFactory.class,
 						BookNameFactory.class, BigDecimalNumericFieldBridge.class)
 				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
+				.addAsResource("jboss-deployment-structure.xml", "WEB-INF/jboss-deployment-structure.xml")
 				.addAsResource("import.sql", "import.sql").addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
 				// Deploy our test datasource
 				.addAsWebInfResource("test-ds.xml", "test-ds.xml");
 	}
 
+	/**
+	 * Simple keyword search.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testSimpleJPALuceneSearch() {
@@ -106,6 +110,9 @@ public class HibernateSearchTest {
 		assertEquals(9, result.size());
 	}
 
+	/**
+	 * Keyword search with sorting.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testSorting() {
@@ -132,6 +139,9 @@ public class HibernateSearchTest {
 		assertEquals(9, result.size());
 	}
 
+	/**
+	 * Search entities related to a given entity.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testMoreLikeThis() {
@@ -154,6 +164,9 @@ public class HibernateSearchTest {
 		assertEquals(5, result.size());
 	}
 
+	/**
+	 * Search entities related to a given entity. Returns a projected result.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testMoreLikeThisProjection() {
@@ -174,6 +187,9 @@ public class HibernateSearchTest {
 		assertEquals(5, result.size());
 	}
 
+	/**
+	 * Simple search on entity field.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testBookReview() {
