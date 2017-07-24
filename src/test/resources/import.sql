@@ -1,4 +1,4 @@
-INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (72, '2007-06-26', '(Theory in Practice (O''Reilly))', 'Beautiful Code: Leading Programmers Explain How They Think', 500);
+INSERT INTO BOOK (id, publication_date, title, sub_title, price, short_title) VALUES (72, '2007-06-26', '(Theory in Practice (O''Reilly))', 'Beautiful Code: Leading Programmers Explain How They Think', 500, 'Theory');
 INSERT INTO AUTHOR (id, name) VALUES (0, 'Greg Wilson');
 INSERT INTO AUTHOR (id, name) VALUES (1, 'Andy Oram');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (72, 0);
@@ -9,15 +9,15 @@ INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (72, 'Edward
 INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (72, 'Edward', 2, 'Theory is boring at first 2.');
 INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (72, 'Edward', 1, 'Theory is boring at first 1.');
 
-INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (1, '2007-06-01', 'Smarty', 'Smart and Gets Things Done: Joel Spolsky''s Concise Guide to Finding the Best Technical Talent, Hardback: Joel Spolsky''s Concise Guide to Finding the Best Technical Talent', 599);
+INSERT INTO BOOK (id, publication_date, title, sub_title, price, short_title) VALUES (1, '2007-06-01', 'Smarty', 'Smart and Gets Things Done: Joel Spolsky''s Concise Guide to Finding the Best Technical Talent, Hardback: Joel Spolsky''s Concise Guide to Finding the Best Technical Talent', 599, 'Smart');
 INSERT INTO AUTHOR (id, name) VALUES (2, 'Joel Spolsky');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (1, 2);
 
-INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (2, '1998-11-30', '', 'R\344tsel der Kochkunst.', 200);
+INSERT INTO BOOK (id, publication_date, title, sub_title, price, short_title) VALUES (2, '1998-11-30', '', 'R\344tsel der Kochkunst.', 200, 'Theory');
 INSERT INTO AUTHOR (id, name) VALUES (3, 'Herve This-Benckhard');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (2, 3);
 
-INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (3, '1995-03-14', 'Design patterns', 'Design patterns : elements of reusable object-oriented software', 1000);
+INSERT INTO BOOK (id, publication_date, title, sub_title, price, short_title) VALUES (3, '1995-03-14', 'Design patterns', 'Design patterns : elements of reusable object-oriented software', 1000, 'Designs');
 INSERT INTO AUTHOR (id, name) VALUES (4, 'Richard Helm');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (3, 4);
 INSERT INTO AUTHOR (id, name) VALUES (5, 'Ralph Johnson');

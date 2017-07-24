@@ -7,10 +7,9 @@
 	<artifactId>hibernate-search-demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>WildFly Quickstarts: hibernate-search-demo</name>
-	<description>A starter Java EE 7 webapp project for use on JBoss WildFly / WildFly, generated from the jboss-javaee6-webapp archetype</description>
+	<name>Hibernate Search Demo</name>
 
-	<url>http://wildfly.org</url>
+	<url>http://czetsuya-tech.blogspot.com</url>
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
@@ -311,4 +310,5 @@
 		</profile>
 
 	</profiles>
+	<description>A quickstart that demonstrates the power of hibernate-search with infinispan integration as second level cache.</description>
 </project>

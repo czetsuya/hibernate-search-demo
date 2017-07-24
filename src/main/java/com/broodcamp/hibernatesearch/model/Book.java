@@ -37,6 +37,7 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.FullTextFilterDef;
 import org.hibernate.search.annotations.FullTextFilterDefs;
+import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.NumericField;
@@ -48,8 +49,8 @@ import org.hibernate.search.annotations.TermVector;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 
-import com.broodcamp.hibernatesearch.filter.BookNameFactory;
 import com.broodcamp.hibernatesearch.filter.BookIdFilter;
+import com.broodcamp.hibernatesearch.filter.BookNameFactory;
 
 @Entity
 @AnalyzerDef(name = "customanalyzer", charFilters = {
@@ -81,6 +82,10 @@ public class Book {
 	@Field(store = Store.YES, termVector = TermVector.YES)
 	@Analyzer(definition = "customanalyzer")
 	private String subTitle;
+
+	@Column(name = "SHORT_TITLE")
+	@Fields({ @Field(name = "short_title", index = Index.YES, analyze = Analyze.NO, store = Store.YES) })
+	private String shortTitle;
 
 	@IndexedEmbedded
 	@ManyToMany
@@ -177,5 +182,13 @@ public class Book {
 
 	public void setPrice(Double price) {
 		this.price = price;
+	}
+
+	public String getShortTitle() {
+		return shortTitle;
+	}
+
+	public void setShortTitle(String shortTitle) {
+		this.shortTitle = shortTitle;
 	}
 }

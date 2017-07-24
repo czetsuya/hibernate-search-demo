@@ -564,6 +564,10 @@ public class HibernateSearchTest {
 		assertEquals(1, result.size());
 	}
 
+	/**
+	 * Implements a fulltext filter using a factory. Don't forget to add a name
+	 * to our name field, otherwise the filter will not work.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testFilterFactory() {
@@ -575,7 +579,7 @@ public class HibernateSearchTest {
 
 		// wrap Lucene query in a javax.persistence.Query
 		FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
-		fullTextQuery.enableFullTextFilter("bookNameFilter").setParameter("bookName", "Design patterns");
+		fullTextQuery.enableFullTextFilter("bookNameFilter").setParameter("bookName", "Theory");
 
 		// execute search
 		List<Book> result = (List<Book>) fullTextQuery.getResultList();
@@ -583,7 +587,7 @@ public class HibernateSearchTest {
 		log.info("Record found=" + result.size());
 		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubtitle()));
 
-		assertEquals(1, result.size());
+		assertEquals(2, result.size());
 	}
 
 	/**
