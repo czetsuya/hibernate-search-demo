@@ -50,9 +50,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.broodcamp.hibernatesearch.bridge.BigDecimalNumericFieldBridge;
+import com.broodcamp.hibernatesearch.filter.BookIdFilter;
 import com.broodcamp.hibernatesearch.filter.BookNameFactory;
 import com.broodcamp.hibernatesearch.filter.BookReviewFactory;
-import com.broodcamp.hibernatesearch.filter.BookReviewFilter;
 import com.broodcamp.hibernatesearch.model.Author;
 import com.broodcamp.hibernatesearch.model.Book;
 import com.broodcamp.hibernatesearch.model.BookReview;
@@ -70,8 +70,8 @@ public class HibernateSearchTest {
 	public static Archive<?> createTestArchive() {
 		return ShrinkWrap.create(WebArchive.class, "test.war")
 				.addClasses(Author.class, Book.class, BookReview.class, Resources.class, StartupListener.class,
-						FiveStarBoostStrategy.class, BookReviewFilter.class, BookReviewFactory.class,
-						BookNameFactory.class, BigDecimalNumericFieldBridge.class)
+						FiveStarBoostStrategy.class, BookIdFilter.class, BookReviewFactory.class, BookNameFactory.class,
+						BigDecimalNumericFieldBridge.class)
 				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
 				.addAsResource("jboss-deployment-structure.xml", "WEB-INF/jboss-deployment-structure.xml")
 				.addAsResource("import.sql", "import.sql").addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
@@ -211,6 +211,12 @@ public class HibernateSearchTest {
 		assertEquals(2, result.size());
 	}
 
+	/**
+	 * Test using static boost at field title. And fuzzy weighted. Fuzzy means
+	 * relevant not entirely a perfect match.
+	 * 
+	 * Book id=27 has Programming is fuzzily matched to Programmers.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testWeighted() {
@@ -250,6 +256,9 @@ public class HibernateSearchTest {
 		assertEquals(10, result.size());
 	}
 
+	/**
+	 * Simple search with paging.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testHibernateSearchPaging() {
@@ -278,6 +287,9 @@ public class HibernateSearchTest {
 		assertEquals(4, result.size());
 	}
 
+	/**
+	 * Simple search with wildcard. It match the word, not the phrase.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testWildCard() {
@@ -301,6 +313,9 @@ public class HibernateSearchTest {
 		assertEquals(2, result.size());
 	}
 
+	/**
+	 * Search the phrase. Can include other words using slop.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testPhrase() {
@@ -342,6 +357,9 @@ public class HibernateSearchTest {
 		assertEquals(1, result.size());
 	}
 
+	/**
+	 * Search using integer range. Commonly use on rating. Limit can be exluded.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testStarred() {
@@ -360,11 +378,14 @@ public class HibernateSearchTest {
 		List<Book> result = (List<Book>) jpaQuery.getResultList();
 
 		log.info("Record found=" + result.size());
-		result.forEach(p -> p.getBookReviews().forEach(q -> log.info("" + q.getStars())));
+		result.forEach(p -> p.getBookReviews().forEach(q -> log.info(p.getId() + " : " + q.getStars())));
 
 		assertEquals(3, result.size());
 	}
 
+	/**
+	 * Search entities greater than a given date.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testDateRangeAbove() {
@@ -391,6 +412,9 @@ public class HibernateSearchTest {
 		assertEquals(50, result.size());
 	}
 
+	/**
+	 * Search entities between dates.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testDateRangeBetween() {
@@ -422,6 +446,9 @@ public class HibernateSearchTest {
 		assertEquals(28, result.size());
 	}
 
+	/**
+	 * Must=And, Should=Or. Add not() at the end to negate.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testAndOr() {
@@ -443,7 +470,7 @@ public class HibernateSearchTest {
 				.must(qb.keyword().onField("subTitle").matching("java").createQuery())
 				.must(qb.keyword().onFields("title", "subTitle").matching("javascript").createQuery()).not()
 				.must(qb.range().onField("publicationDate").from(from).to(to).createQuery())
-				.must(qb.range().onField("bookReviews.stars").above(3).createQuery()).createQuery();
+				.should(qb.range().onField("bookReviews.stars").above(5).createQuery()).createQuery();
 
 		// wrap Lucene query in a javax.persistence.Query
 		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
@@ -481,6 +508,10 @@ public class HibernateSearchTest {
 		assertEquals(4, result.size());
 	}
 
+	/**
+	 * Returns an array of field (projection) from a given query. Useful if you
+	 * don't want to return the whole object.
+	 */
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void testProjection() {
@@ -502,12 +533,15 @@ public class HibernateSearchTest {
 
 		log.info("Record found=" + results.size());
 		Object[] firstResult = (Object[]) results.get(0);
-		String title = (String) firstResult[0];
-		log.info("title=" + title);
+		String subTitle = (String) firstResult[0];
+		log.info("subTitle=" + subTitle);
 
 		assertEquals(6, results.size());
 	}
 
+	/**
+	 * Search using a pre-defined filter. Doesn't work on child entity field?
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testFilter() {
@@ -519,7 +553,7 @@ public class HibernateSearchTest {
 
 		// wrap Lucene query in a javax.persistence.Query
 		FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
-		fullTextQuery.enableFullTextFilter("bookReviewFilter");
+		fullTextQuery.enableFullTextFilter("bookIdFilter");
 
 		// execute search
 		List<Book> result = (List<Book>) fullTextQuery.getResultList();
@@ -527,7 +561,7 @@ public class HibernateSearchTest {
 		log.info("Record found=" + result.size());
 		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubtitle()));
 
-		// assertEquals(4, result.size());
+		assertEquals(1, result.size());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -541,7 +575,7 @@ public class HibernateSearchTest {
 
 		// wrap Lucene query in a javax.persistence.Query
 		FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
-		fullTextQuery.enableFullTextFilter("bookNameFilter").setParameter("bookName", "programming");
+		fullTextQuery.enableFullTextFilter("bookNameFilter").setParameter("bookName", "Design patterns");
 
 		// execute search
 		List<Book> result = (List<Book>) fullTextQuery.getResultList();
@@ -549,9 +583,12 @@ public class HibernateSearchTest {
 		log.info("Record found=" + result.size());
 		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubtitle()));
 
-		// assertEquals(4, result.size());
+		assertEquals(1, result.size());
 	}
 
+	/**
+	 * Group together a given category with count.
+	 */
 	@Test
 	public void testDiscreetFacet() {
 		log.info("testDiscreetFacet");
@@ -577,6 +614,9 @@ public class HibernateSearchTest {
 		assertEquals(3, x.getCount());
 	}
 
+	/**
+	 * Group price by amount. See how price is divided.
+	 */
 	@Test
 	public void testRangeFacet() {
 		log.info("testRangeFacet");

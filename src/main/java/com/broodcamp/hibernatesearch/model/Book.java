@@ -49,7 +49,7 @@ import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 
 import com.broodcamp.hibernatesearch.filter.BookNameFactory;
-import com.broodcamp.hibernatesearch.filter.BookReviewFilter;
+import com.broodcamp.hibernatesearch.filter.BookIdFilter;
 
 @Entity
 @AnalyzerDef(name = "customanalyzer", charFilters = {
@@ -61,7 +61,7 @@ import com.broodcamp.hibernatesearch.filter.BookReviewFilter;
 						@Parameter(name = "language", value = "English") }) })
 @Indexed
 @Boost(2f)
-@FullTextFilterDefs({ @FullTextFilterDef(name = "bookReviewFilter", impl = BookReviewFilter.class),
+@FullTextFilterDefs({ @FullTextFilterDef(name = "bookIdFilter", impl = BookIdFilter.class),
 		@FullTextFilterDef(name = "bookNameFilter", impl = BookNameFactory.class) })
 public class Book {
 
