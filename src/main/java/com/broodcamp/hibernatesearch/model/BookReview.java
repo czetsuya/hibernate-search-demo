@@ -14,8 +14,10 @@ import org.hibernate.search.annotations.CharFilterDef;
 import org.hibernate.search.annotations.DynamicBoost;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Fields;
+import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.NumericField;
 import org.hibernate.search.annotations.NumericFields;
+import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 
@@ -33,10 +35,11 @@ import com.broodcamp.hibernatesearch.strategy.FiveStarBoostStrategy;
 @DynamicBoost(impl = FiveStarBoostStrategy.class)
 public class BookReview {
 
-	@Field
+	@Field(name = "username", store = Store.NO)
 	private String username;
 
-	@Fields({ @Field(name = "stars", analyze = Analyze.YES) })
+	@Fields({ @Field(name = "stars", index = Index.YES, analyze = Analyze.NO, store = Store.YES),
+			@Field(name = "stars_filter", index = Index.YES, analyze = Analyze.NO, store = Store.YES) })
 	@NumericFields({ @NumericField(forField = "stars") })
 	private int stars;
 

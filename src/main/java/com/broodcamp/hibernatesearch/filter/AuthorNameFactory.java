@@ -13,21 +13,21 @@ import org.slf4j.LoggerFactory;
 /**
  * @author czetsuya
  **/
-public class BookReviewFactory {
+public class AuthorNameFactory {
 
-	private Logger log = LoggerFactory.getLogger(BookReviewFactory.class);
+	private Logger log = LoggerFactory.getLogger(AuthorNameFactory.class);
 
-	private Integer stars;
+	private String authorName;
 
 	@Factory
 	public Filter getFilter() {
-		log.debug("bookReviews.stars={}", stars);
-		Query query = new TermQuery(new Term("bookReviews.stars_filter", stars.toString()));
+		log.debug("AuthorNameFactory.name={}", authorName);
+		Query query = new TermQuery(new Term("authors.name", authorName));
 		return new CachingWrapperFilter(new QueryWrapperFilter(query));
 	}
 
-	public void setStars(Integer stars) {
-		this.stars = stars;
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
 	}
 
 }

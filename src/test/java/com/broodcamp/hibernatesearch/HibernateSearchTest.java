@@ -50,6 +50,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.broodcamp.hibernatesearch.bridge.BigDecimalNumericFieldBridge;
+import com.broodcamp.hibernatesearch.filter.AuthorNameFactory;
 import com.broodcamp.hibernatesearch.filter.BookIdFilter;
 import com.broodcamp.hibernatesearch.filter.BookNameFactory;
 import com.broodcamp.hibernatesearch.filter.BookReviewFactory;
@@ -71,7 +72,7 @@ public class HibernateSearchTest {
 		return ShrinkWrap.create(WebArchive.class, "test.war")
 				.addClasses(Author.class, Book.class, BookReview.class, Resources.class, StartupListener.class,
 						FiveStarBoostStrategy.class, BookIdFilter.class, BookReviewFactory.class, BookNameFactory.class,
-						BigDecimalNumericFieldBridge.class)
+						BigDecimalNumericFieldBridge.class, AuthorNameFactory.class)
 				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
 				.addAsResource("jboss-deployment-structure.xml", "WEB-INF/jboss-deployment-structure.xml")
 				.addAsResource("import.sql", "import.sql").addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
@@ -579,7 +580,7 @@ public class HibernateSearchTest {
 
 		// wrap Lucene query in a javax.persistence.Query
 		FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
-		fullTextQuery.enableFullTextFilter("bookNameFilter").setParameter("bookName", "Theory");
+		fullTextQuery.enableFullTextFilter("Book.NameFilter").setParameter("bookName", "Theory");
 
 		// execute search
 		List<Book> result = (List<Book>) fullTextQuery.getResultList();
@@ -588,6 +589,56 @@ public class HibernateSearchTest {
 		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubtitle()));
 
 		assertEquals(2, result.size());
+	}
+
+	/*
+	 * Seems like filter doesn't work on collectionTable?
+	 */
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testBookReviewFactory() {
+		log.info("testBookReviewFactory");
+
+		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
+		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
+		org.apache.lucene.search.Query luceneQuery = qb.all().createQuery();
+
+		// wrap Lucene query in a javax.persistence.Query
+		FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
+		fullTextQuery.enableFullTextFilter("Book.ReviewFactory").setParameter("stars", 5);
+
+		// execute search
+		List<Book> result = (List<Book>) fullTextQuery.getResultList();
+
+		log.info("Record found=" + result.size());
+		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubtitle()));
+
+		// assertEquals(2, result.size());
+	}
+
+	/**
+	 * Filter using inner fields (author.name).
+	 */
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testAuthorNameFilter() {
+		log.info("testAuthorNameFilter");
+
+		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
+		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
+		org.apache.lucene.search.Query luceneQuery = qb.all().createQuery();
+
+		// wrap Lucene query in a javax.persistence.Query
+		FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
+		fullTextQuery.enableFullTextFilter("Author.NameFactory").setParameter("authorName", "Erich Gamma");
+
+		// execute search
+		List<Book> result = (List<Book>) fullTextQuery.getResultList();
+
+		log.info("Record found=" + result.size());
+		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubtitle()));
+
+		assertEquals(1, result.size());
 	}
 
 	/**

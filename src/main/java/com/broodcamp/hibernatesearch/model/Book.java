@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -49,8 +50,10 @@ import org.hibernate.search.annotations.TermVector;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 
+import com.broodcamp.hibernatesearch.filter.AuthorNameFactory;
 import com.broodcamp.hibernatesearch.filter.BookIdFilter;
 import com.broodcamp.hibernatesearch.filter.BookNameFactory;
+import com.broodcamp.hibernatesearch.filter.BookReviewFactory;
 
 @Entity
 @AnalyzerDef(name = "customanalyzer", charFilters = {
@@ -63,7 +66,9 @@ import com.broodcamp.hibernatesearch.filter.BookNameFactory;
 @Indexed
 @Boost(2f)
 @FullTextFilterDefs({ @FullTextFilterDef(name = "bookIdFilter", impl = BookIdFilter.class),
-		@FullTextFilterDef(name = "bookNameFilter", impl = BookNameFactory.class) })
+		@FullTextFilterDef(name = "Book.NameFilter", impl = BookNameFactory.class),
+		@FullTextFilterDef(name = "Book.ReviewFactory", impl = BookReviewFactory.class),
+		@FullTextFilterDef(name = "Author.NameFactory", impl = AuthorNameFactory.class)})
 public class Book {
 
 	@Id
@@ -84,7 +89,7 @@ public class Book {
 	private String subTitle;
 
 	@Column(name = "SHORT_TITLE")
-	@Fields({ @Field(name = "short_title", index = Index.YES, analyze = Analyze.NO, store = Store.YES) })
+	@Fields({ @Field(name = "short_title", index = Index.YES, analyze = Analyze.NO, store = Store.NO) })
 	private String shortTitle;
 
 	@IndexedEmbedded
@@ -94,10 +99,11 @@ public class Book {
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "PUBLICATION_DATE")
-	@Field(analyze = Analyze.NO, store = Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.NO)
 	@DateBridge(resolution = Resolution.DAY)
 	private Date publicationDate;
 
+	@OrderBy("stars DESC")
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "BOOK_REVIEW", joinColumns = @JoinColumn(name = "BOOK_ID"))
 	@Fetch(FetchMode.SELECT)
