@@ -68,7 +68,7 @@ import com.broodcamp.hibernatesearch.filter.BookReviewFactory;
 @FullTextFilterDefs({ @FullTextFilterDef(name = "bookIdFilter", impl = BookIdFilter.class),
 		@FullTextFilterDef(name = "Book.NameFilter", impl = BookNameFactory.class),
 		@FullTextFilterDef(name = "Book.ReviewFactory", impl = BookReviewFactory.class),
-		@FullTextFilterDef(name = "Author.NameFactory", impl = AuthorNameFactory.class)})
+		@FullTextFilterDef(name = "Author.NameFactory", impl = AuthorNameFactory.class) })
 public class Book {
 
 	@Id
@@ -107,7 +107,7 @@ public class Book {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "BOOK_REVIEW", joinColumns = @JoinColumn(name = "BOOK_ID"))
 	@Fetch(FetchMode.SELECT)
-	@IndexedEmbedded(depth = 1, includePaths = { "stars", "comments" })
+	@IndexedEmbedded(depth = 1, includePaths = { "stars", "comments", "stars_filter" })
 	private Set<BookReview> bookReviews;
 
 	@Column(name = "PRICE")
@@ -134,14 +134,6 @@ public class Book {
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	public String getSubtitle() {
-		return subTitle;
-	}
-
-	public void setSubtitle(String subTitle) {
-		this.subTitle = subTitle;
 	}
 
 	public Set<Author> getAuthors() {

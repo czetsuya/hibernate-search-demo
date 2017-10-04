@@ -107,7 +107,7 @@ INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (22, '19
 INSERT INTO AUTHOR (id, name) VALUES (31, 'Uwe Sch\366ning');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (22, 31);
 
-INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (23, '2007-04-17', '', 'The Children of Hurin', 1000);
+INSERT INTO BOOK (id, publication_date, title, sub_title, price) VALUES (23, '2007-04-17', 'The Children of Hurin', 'The Children of Hurin', 1000);
 INSERT INTO AUTHOR (id, name) VALUES (32, 'J.R.R. Tolkien');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (23, 32);
 INSERT INTO BOOK_REVIEW (book_id, username, stars, comments) VALUES (23, 'Ifrit', 4, 'Amazing book..');
@@ -266,7 +266,7 @@ INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (61, '1996-01-0
 INSERT INTO AUTHOR (id, name) VALUES (91, 'Helmut Kopka');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (61, 91);
 
-INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (62, '2006-12-05', '', 'Java Persistence with Hibernate');
+INSERT INTO BOOK (id, publication_date, title, sub_title) VALUES (62, '2006-12-05', 'Java Persistence with Hibernate', 'Java Persistence with Hibernate');
 INSERT INTO AUTHOR (id, name) VALUES (92, 'Gavin King');
 INSERT INTO BOOK_AUTHOR (book_id, author_id) VALUES (62, 92);
 INSERT INTO AUTHOR (id, name) VALUES (93, 'Christian Bauer');

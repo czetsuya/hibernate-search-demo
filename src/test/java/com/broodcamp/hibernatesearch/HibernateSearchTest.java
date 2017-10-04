@@ -309,7 +309,7 @@ public class HibernateSearchTest {
 		List<Book> result = (List<Book>) jpaQuery.getResultList();
 
 		log.info("Record found=" + result.size());
-		result.forEach(p -> log.info(p.getTitle() + " " + p.getSubtitle()));
+		result.forEach(p -> log.info(p.getTitle() + " " + p.getSubTitle()));
 
 		assertEquals(2, result.size());
 	}
@@ -353,7 +353,7 @@ public class HibernateSearchTest {
 		result = (List<Book>) jpaQuery.getResultList();
 
 		log.info("Record found=" + result.size());
-		result.forEach(p -> log.info(p.getSubtitle()));
+		result.forEach(p -> log.info(p.getSubTitle()));
 
 		assertEquals(1, result.size());
 	}
@@ -379,7 +379,9 @@ public class HibernateSearchTest {
 		List<Book> result = (List<Book>) jpaQuery.getResultList();
 
 		log.info("Record found=" + result.size());
-		result.forEach(p -> p.getBookReviews().forEach(q -> log.info(p.getId() + " : " + q.getStars())));
+		// result.forEach(p -> p.getBookReviews().forEach(q -> log.info(p.getId() + " :
+		// " + q.getStars())));
+		result.forEach(p -> log.info(p.getTitle() + " " + p.getShortTitle() + " " + p.getSubTitle()));
 
 		assertEquals(3, result.size());
 	}
@@ -480,7 +482,7 @@ public class HibernateSearchTest {
 		List<Book> result = (List<Book>) jpaQuery.getResultList();
 
 		log.info("Record found=" + result.size());
-		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubtitle() + " | " + p.getPublicationDate()));
+		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubTitle() + " | " + p.getPublicationDate()));
 
 		assertEquals(2, result.size());
 	}
@@ -504,7 +506,7 @@ public class HibernateSearchTest {
 		List<Book> result = (List<Book>) jpaQuery.getResultList();
 
 		log.info("Record found=" + result.size());
-		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubtitle()));
+		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubTitle()));
 
 		assertEquals(4, result.size());
 	}
@@ -560,14 +562,14 @@ public class HibernateSearchTest {
 		List<Book> result = (List<Book>) fullTextQuery.getResultList();
 
 		log.info("Record found=" + result.size());
-		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubtitle()));
+		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubTitle()));
 
 		assertEquals(1, result.size());
 	}
 
 	/**
-	 * Implements a fulltext filter using a factory. Don't forget to add a name
-	 * to our name field, otherwise the filter will not work.
+	 * Implements a fulltext filter using a factory. Don't forget to add a name to
+	 * our name field, otherwise the filter will not work.
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
@@ -586,7 +588,7 @@ public class HibernateSearchTest {
 		List<Book> result = (List<Book>) fullTextQuery.getResultList();
 
 		log.info("Record found=" + result.size());
-		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubtitle()));
+		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubTitle()));
 
 		assertEquals(2, result.size());
 	}
@@ -611,7 +613,7 @@ public class HibernateSearchTest {
 		List<Book> result = (List<Book>) fullTextQuery.getResultList();
 
 		log.info("Record found=" + result.size());
-		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubtitle()));
+		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubTitle()));
 
 		// assertEquals(2, result.size());
 	}
@@ -636,7 +638,7 @@ public class HibernateSearchTest {
 		List<Book> result = (List<Book>) fullTextQuery.getResultList();
 
 		log.info("Record found=" + result.size());
-		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubtitle()));
+		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubTitle()));
 
 		assertEquals(1, result.size());
 	}
