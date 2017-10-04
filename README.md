@@ -4,7 +4,7 @@
 This tutorial is for developers who are just beginning to learn hibernate-search and trying to setup a demo project. Most of the codes are copied from hibernate-search documentation: https://docs.jboss.org/hibernate/stable/search/reference/en-US/html_single/
 
 ##To run this you must download the following wildfly modules:
-	- hibernate-search-5.7.1.Final-dist - [Hibernate Search], not applicable on Wildfly 11
+	- hibernate-search-5.7.1.Final-dist - [Hibernate Search], Wait for the module or build from GIT
 	- infinispan-wildfly-modules-9.1.0.Final / infinispan-wildfly-modules-9.1.1.Final (WF11)
 *Note that I installed in this order.
 
