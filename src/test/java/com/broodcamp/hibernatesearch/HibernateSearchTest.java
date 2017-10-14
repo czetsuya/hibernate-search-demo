@@ -38,6 +38,7 @@ import org.hibernate.search.query.ObjectLookupMethod;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.hibernate.search.query.engine.spi.FacetManager;
 import org.hibernate.search.query.facet.Facet;
+import org.hibernate.search.query.facet.FacetSelection;
 import org.hibernate.search.query.facet.FacetSortOrder;
 import org.hibernate.search.query.facet.FacetingRequest;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -646,6 +647,7 @@ public class HibernateSearchTest {
 	/**
 	 * Group together a given category with count.
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testDiscreetFacet() {
 		log.info("testDiscreetFacet");
@@ -669,6 +671,15 @@ public class HibernateSearchTest {
 
 		Facet x = facets.stream().filter(p -> p.getValue().equals("Stephen King")).findFirst().get();
 		assertEquals(3, x.getCount());
+
+		// filter query by the first facet
+		FacetSelection facetSelection = facetManager.getFacetGroup("authorFacetRequest");
+		facetSelection.selectFacets(facets.get(0));
+
+		List<Book> tweets = fullTextQuery.getResultList();
+		for (Book t : tweets) {
+			log.info(t.toString());
+		}
 	}
 
 	/**
