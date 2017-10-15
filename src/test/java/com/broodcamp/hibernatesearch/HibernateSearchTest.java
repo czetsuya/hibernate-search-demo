@@ -18,17 +18,20 @@ package com.broodcamp.hibernatesearch;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
+import org.hibernate.Session;
 import org.hibernate.search.engine.ProjectionConstants;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
@@ -58,6 +61,7 @@ import com.broodcamp.hibernatesearch.filter.BookReviewFactory;
 import com.broodcamp.hibernatesearch.model.Author;
 import com.broodcamp.hibernatesearch.model.Book;
 import com.broodcamp.hibernatesearch.model.BookReview;
+import com.broodcamp.hibernatesearch.model.EntityFacet;
 import com.broodcamp.hibernatesearch.strategy.FiveStarBoostStrategy;
 
 @RunWith(Arquillian.class)
@@ -73,7 +77,7 @@ public class HibernateSearchTest {
 		return ShrinkWrap.create(WebArchive.class, "test.war")
 				.addClasses(Author.class, Book.class, BookReview.class, Resources.class, StartupListener.class,
 						FiveStarBoostStrategy.class, BookIdFilter.class, BookReviewFactory.class, BookNameFactory.class,
-						BigDecimalNumericFieldBridge.class, AuthorNameFactory.class)
+						BigDecimalNumericFieldBridge.class, AuthorNameFactory.class, EntityFacet.class)
 				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
 				.addAsResource("jboss-deployment-structure.xml", "WEB-INF/jboss-deployment-structure.xml")
 				.addAsResource("import.sql", "import.sql").addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
@@ -680,6 +684,45 @@ public class HibernateSearchTest {
 		for (Book t : tweets) {
 			log.info(t.toString());
 		}
+	}
+
+	@Test
+	public void testDiscreetFacetWithEntityData() {
+		log.info("testDiscreetFacetWithEntityData");
+
+		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
+		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
+
+		org.apache.lucene.search.Query luceneQuery = qb.all().createQuery();
+		FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
+
+		// define the facet
+		FacetingRequest authorFacet = qb.facet().name("authorIdFacet").onField("authors.id_facet").discrete()
+				.orderedBy(FacetSortOrder.COUNT_DESC).includeZeroCounts(false).maxFacetCount(5).createFacetingRequest();
+
+		// retrieve facet manager and apply faceting request
+		FacetManager facetManager = fullTextQuery.getFacetManager();
+		facetManager.enableFaceting(authorFacet);
+
+		// retrieve the faceting results
+		List<Facet> facets = facetManager.getFacets("authorIdFacet");
+
+		// collect all the ids
+		List<Integer> vcIds = facets.stream().map(p -> Integer.parseInt(p.getValue())).collect(Collectors.toList());
+		// query all the Authors given the id we faceted above, I think multiLoad has
+		// been introduced in HS 5.x
+		List<Author> authors = fullTextEntityManager.unwrap(Session.class).byMultipleIds(Author.class).multiLoad(vcIds);
+
+		// fill our container object with the facet and author entity
+		List<EntityFacet<Author>> entityFacets = new ArrayList<>(facets.size());
+		for (int i = 0; i < facets.size(); i++) {
+			entityFacets.add(new EntityFacet<Author>(facets.get(i), authors.get(i)));
+		}
+
+		entityFacets.stream().forEach(System.out::println);
+
+		assertEquals(5, facets.size());
+		assertEquals(1, entityFacets.get(0).getCount());
 	}
 
 	/**
