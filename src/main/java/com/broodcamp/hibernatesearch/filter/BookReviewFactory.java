@@ -19,15 +19,15 @@ public class BookReviewFactory {
 
 	private Integer stars;
 
+	public void setStars(Integer stars) {
+		this.stars = stars;
+	}
+
 	@Factory
 	public Filter getFilter() {
 		log.debug("bookReviews.stars={}", stars);
-		Query query = new TermQuery(new Term("bookReviews.stars_filter", stars.toString()));
+		Query query = new TermQuery(new Term("bookReviews.stars", stars.toString()));
 		return new CachingWrapperFilter(new QueryWrapperFilter(query));
-	}
-
-	public void setStars(Integer stars) {
-		this.stars = stars;
 	}
 
 }

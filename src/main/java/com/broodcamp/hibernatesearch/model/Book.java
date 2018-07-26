@@ -10,6 +10,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -56,28 +57,27 @@ import com.broodcamp.hibernatesearch.filter.BookNameFactory;
 import com.broodcamp.hibernatesearch.filter.BookReviewFactory;
 
 @Entity
-@AnalyzerDef(name = "customanalyzer", charFilters = {
-		@CharFilterDef(factory = HTMLStripCharFilterFactory.class) }, tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
-				@TokenFilterDef(factory = StandardFilterFactory.class),
-				@TokenFilterDef(factory = StopFilterFactory.class),
+@AnalyzerDef(name = "customanalyzer", charFilters = { @CharFilterDef(factory = HTMLStripCharFilterFactory.class) }, //
+		tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), //
+		filters = { @TokenFilterDef(factory = StandardFilterFactory.class), //
+				@TokenFilterDef(factory = StopFilterFactory.class), //
 				@TokenFilterDef(factory = LowerCaseFilterFactory.class),
-				@TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = {
-						@Parameter(name = "language", value = "English") }) })
+				@TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = { @Parameter(name = "language", value = "English") }) })
 @Indexed
 @Boost(2f)
-@FullTextFilterDefs({ @FullTextFilterDef(name = "bookIdFilter", impl = BookIdFilter.class),
-		@FullTextFilterDef(name = "Book.NameFilter", impl = BookNameFactory.class),
-		@FullTextFilterDef(name = "Book.ReviewFactory", impl = BookReviewFactory.class),
+@FullTextFilterDefs({ @FullTextFilterDef(name = "bookIdFilter", impl = BookIdFilter.class), //
+		@FullTextFilterDef(name = "Book.NameFilter", impl = BookNameFactory.class), //
+		@FullTextFilterDef(name = "Book.ReviewFactory", impl = BookReviewFactory.class), //
 		@FullTextFilterDef(name = "Author.NameFactory", impl = AuthorNameFactory.class) })
 public class Book {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@DocumentId
 	private Integer id;
 
 	@Column(name = "TITLE")
-	@Fields({ @Field(store = Store.COMPRESS), @Field(name = "sorting_title", analyze = Analyze.NO) })
+	@Fields({ @Field(store = Store.YES, termVector = TermVector.YES), @Field(name = "sorting_title", analyze = Analyze.NO) })
 	@Analyzer(definition = "customanalyzer")
 	@Boost(1.5f)
 	@SortableField
@@ -170,8 +170,8 @@ public class Book {
 
 	@Override
 	public String toString() {
-		return "Book [id=" + id + ", title=" + title + ", subTitle=" + subTitle + ", authors=" + authors
-				+ ", publicationDate=" + publicationDate + ", bookReviews=" + bookReviews + "]";
+		return "Book [id=" + id + ", title=" + title + ", subTitle=" + subTitle + ", authors=" + authors + ", publicationDate=" + publicationDate + ", bookReviews=" + bookReviews
+				+ "]";
 	}
 
 	public Double getPrice() {

@@ -19,15 +19,15 @@ public class AuthorNameFactory {
 
 	private String authorName;
 
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
+	}
+
 	@Factory
 	public Filter getFilter() {
 		log.debug("AuthorNameFactory.name={}", authorName);
 		Query query = new TermQuery(new Term("authors.name", authorName));
 		return new CachingWrapperFilter(new QueryWrapperFilter(query));
-	}
-
-	public void setAuthorName(String authorName) {
-		this.authorName = authorName;
 	}
 
 }

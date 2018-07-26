@@ -1,19 +1,3 @@
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
- * contributors by the @authors tag. See the copyright.txt in the
- * distribution for a full listing of individual contributors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.broodcamp.hibernatesearch;
 
 import static org.junit.Assert.assertEquals;
@@ -64,6 +48,9 @@ import com.broodcamp.hibernatesearch.model.BookReview;
 import com.broodcamp.hibernatesearch.model.EntityFacet;
 import com.broodcamp.hibernatesearch.strategy.FiveStarBoostStrategy;
 
+/**
+ * @author czetsuya
+ */
 @RunWith(Arquillian.class)
 public class HibernateSearchTest {
 
@@ -75,22 +62,22 @@ public class HibernateSearchTest {
 	@Deployment
 	public static Archive<?> createTestArchive() {
 		return ShrinkWrap.create(WebArchive.class, "test.war")
-				.addClasses(Author.class, Book.class, BookReview.class, Resources.class, StartupListener.class,
-						FiveStarBoostStrategy.class, BookIdFilter.class, BookReviewFactory.class, BookNameFactory.class,
-						BigDecimalNumericFieldBridge.class, AuthorNameFactory.class, EntityFacet.class)
+				.addClasses(Author.class, Book.class, BookReview.class, Resources.class, StartupListener.class, FiveStarBoostStrategy.class, BookIdFilter.class,
+						BookReviewFactory.class, BookNameFactory.class, BigDecimalNumericFieldBridge.class, AuthorNameFactory.class, EntityFacet.class)
 				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
-				.addAsResource("jboss-deployment-structure.xml", "WEB-INF/jboss-deployment-structure.xml")
-				.addAsResource("import.sql", "import.sql").addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+				.addAsResource("jboss-deployment-structure.xml", "WEB-INF/jboss-deployment-structure.xml").addAsResource("import.sql", "import.sql")
+				.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
 				// Deploy our test datasource
 				.addAsWebInfResource("test-ds.xml", "test-ds.xml");
 	}
 
 	/**
-	 * Simple keyword search.
+	 * Simple keyword search. Search can be perform on multiple fields.
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testSimpleJPALuceneSearch() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testSimpleJPALuceneSearch");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
@@ -101,8 +88,7 @@ public class HibernateSearchTest {
 		// or the Lucene programmatic API. The Hibernate Search DSL is
 		// recommended though
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
-		org.apache.lucene.search.Query luceneQuery = qb.keyword().onFields("title", "subTitle", "authors.name")
-				.matching("Programmers").createQuery();
+		org.apache.lucene.search.Query luceneQuery = qb.keyword().onFields("title", "subTitle", "authors.name").matching("Programmers").createQuery();
 
 		// wrap Lucene query in a javax.persistence.Query
 		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
@@ -122,13 +108,13 @@ public class HibernateSearchTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testSorting() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testSorting");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
-		org.apache.lucene.search.Query luceneQuery = qb.keyword().onFields("title", "subTitle", "authors.name")
-				.matching("Programmers").createQuery();
+		org.apache.lucene.search.Query luceneQuery = qb.keyword().onFields("title", "subTitle", "authors.name").matching("Programmers").createQuery();
 
 		Sort sort = new Sort(SortField.FIELD_SCORE, new SortField("sorting_title", SortField.Type.STRING));
 
@@ -151,14 +137,14 @@ public class HibernateSearchTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testMoreLikeThis() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testMoreLikeThis");
 
 		Book book = em.find(Book.class, 14);
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
-		org.apache.lucene.search.Query luceneQuery = qb.moreLikeThis().comparingFields("title").toEntity(book)
-				.createQuery();
+		org.apache.lucene.search.Query luceneQuery = qb.moreLikeThis().comparingFields("title").toEntity(book).createQuery();
 		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
 
 		// execute search
@@ -176,16 +162,15 @@ public class HibernateSearchTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testMoreLikeThisProjection() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testMoreLikeThisProjection");
 
 		Book book = em.find(Book.class, 14);
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
-		org.apache.lucene.search.Query luceneQuery = qb.moreLikeThis().comparingFields("title").toEntity(book)
-				.createQuery();
-		List<Object> result = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class)
-				.setProjection(ProjectionConstants.THIS, ProjectionConstants.SCORE).getResultList();
+		org.apache.lucene.search.Query luceneQuery = qb.moreLikeThis().comparingFields("title").toEntity(book).createQuery();
+		List<Object> result = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class).setProjection(ProjectionConstants.THIS, ProjectionConstants.SCORE).getResultList();
 
 		log.info("Record found=" + result.size());
 		result.forEach(p -> log.info(p.toString()));
@@ -194,18 +179,18 @@ public class HibernateSearchTest {
 	}
 
 	/**
-	 * Simple search on entity field.
+	 * Simple search on entity field (subField). Example book.bookReview.comments.
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testBookReview() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testBookReview");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
-		org.apache.lucene.search.Query luceneQuery = qb.keyword().onField("bookReviews.comments")
-				.matching("interesting").createQuery();
+		org.apache.lucene.search.Query luceneQuery = qb.keyword().onField("bookReviews.comments").matching("interesting").createQuery();
 		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
 
 		// execute search
@@ -218,21 +203,22 @@ public class HibernateSearchTest {
 	}
 
 	/**
-	 * Test using static boost at field title. And fuzzy weighted. Fuzzy means
-	 * relevant not entirely a perfect match.
+	 * Test using static fuzzy weighted boost at field title. Fuzzy means relevant,
+	 * not entirely a perfect match.
 	 * 
 	 * Book id=27 has Programming is fuzzily matched to Programmers.
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testWeighted() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testWeighted");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
-		org.apache.lucene.search.Query luceneQuery = qb.phrase().onField("title").boostedTo(2).andField("subTitle")
-				.andField("authors.name").sentence("\"Programmers\"").createQuery();
+		org.apache.lucene.search.Query luceneQuery = qb.phrase().onField("title").boostedTo(2).andField("subTitle").andField("authors.name").sentence("\"Programmers\"")
+				.createQuery();
 
 		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
 
@@ -248,8 +234,8 @@ public class HibernateSearchTest {
 
 		log.info("fuzzy weighted");
 
-		luceneQuery = qb.keyword().fuzzy().withEditDistanceUpTo(1).withPrefixLength(1).onFields("title").boostedTo(2)
-				.andField("subTitle").andField("authors.name").matching("\"Programmers\"").createQuery();
+		luceneQuery = qb.keyword().fuzzy().withEditDistanceUpTo(1).withPrefixLength(1).onFields("title").boostedTo(2).andField("subTitle").andField("authors.name")
+				.matching("\"Programmers\"").createQuery();
 
 		jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
 
@@ -268,13 +254,13 @@ public class HibernateSearchTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testHibernateSearchPaging() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testHibernateSearchPaging");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
-		org.apache.lucene.search.Query luceneQuery = qb.keyword().onFields("title", "subTitle", "authors.name")
-				.matching("Programmers").createQuery();
+		org.apache.lucene.search.Query luceneQuery = qb.keyword().onFields("title", "subTitle", "authors.name").matching("Programmers").createQuery();
 
 		// wrap Lucene query in a javax.persistence.Query
 		FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
@@ -294,18 +280,18 @@ public class HibernateSearchTest {
 	}
 
 	/**
-	 * Simple search with wildcard. It match the word, not the phrase.
+	 * Simple search with wild card. It matches the word, not the phrase.
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testWildCard() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testWildCard");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
-		org.apache.lucene.search.Query luceneQuery = qb.keyword().wildcard().onFields("title", "subTitle")
-				.matching("*theo*").createQuery();
+		org.apache.lucene.search.Query luceneQuery = qb.keyword().wildcard().onFields("title", "subTitle").matching("*theo*").createQuery();
 
 		// wrap Lucene query in a javax.persistence.Query
 		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
@@ -325,13 +311,13 @@ public class HibernateSearchTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testPhrase() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testPhrase");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
-		org.apache.lucene.search.Query luceneQuery = qb.phrase().onField("subTitle").sentence("best practices")
-				.createQuery();
+		org.apache.lucene.search.Query luceneQuery = qb.phrase().onField("subTitle").sentence("best practices").createQuery();
 
 		// wrap Lucene query in a javax.persistence.Query
 		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
@@ -364,18 +350,18 @@ public class HibernateSearchTest {
 	}
 
 	/**
-	 * Search using integer range. Commonly use on rating. Limit can be exluded.
+	 * Search using integer range. Commonly use on rating. Limit can be excluded.
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testStarred() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testStarred");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
-		org.apache.lucene.search.Query luceneQuery = qb.range().onField("bookReviews.stars").from(4).to(5)
-				.excludeLimit().createQuery();
+		org.apache.lucene.search.Query luceneQuery = qb.range().onField("bookReviews.stars").from(4).to(5).excludeLimit().createQuery();
 
 		// wrap Lucene query in a javax.persistence.Query
 		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
@@ -386,17 +372,18 @@ public class HibernateSearchTest {
 		log.info("Record found=" + result.size());
 		// result.forEach(p -> p.getBookReviews().forEach(q -> log.info(p.getId() + " :
 		// " + q.getStars())));
-		result.forEach(p -> log.info(p.getTitle() + " " + p.getShortTitle() + " " + p.getSubTitle()));
+		result.forEach(p -> log.info(p.getId() + " " + p.getTitle() + " " + p.getShortTitle() + " " + p.getSubTitle()));
 
 		assertEquals(3, result.size());
 	}
 
 	/**
-	 * Search entities greater than a given date.
+	 * Search entities with field greater than a given date.
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testDateRangeAbove() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testDateRangeAbove");
 
 		Calendar c = Calendar.getInstance();
@@ -405,8 +392,7 @@ public class HibernateSearchTest {
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
-		org.apache.lucene.search.Query luceneQuery = qb.range().onField("publicationDate").above(c.getTime())
-				.createQuery();
+		org.apache.lucene.search.Query luceneQuery = qb.range().onField("publicationDate").above(c.getTime()).createQuery();
 
 		// wrap Lucene query in a javax.persistence.Query
 		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
@@ -426,6 +412,7 @@ public class HibernateSearchTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testDateRangeBetween() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testDateRangeBetween");
 
 		Calendar c = Calendar.getInstance();
@@ -439,8 +426,7 @@ public class HibernateSearchTest {
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
-		org.apache.lucene.search.Query luceneQuery = qb.range().onField("publicationDate").from(from).to(to)
-				.createQuery();
+		org.apache.lucene.search.Query luceneQuery = qb.range().onField("publicationDate").from(from).to(to).createQuery();
 
 		// wrap Lucene query in a javax.persistence.Query
 		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
@@ -460,6 +446,7 @@ public class HibernateSearchTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testAndOr() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testAndOr");
 
 		Calendar c = Calendar.getInstance();
@@ -474,11 +461,9 @@ public class HibernateSearchTest {
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 
-		org.apache.lucene.search.Query luceneQuery = qb.bool()
-				.must(qb.keyword().onField("subTitle").matching("java").createQuery())
+		org.apache.lucene.search.Query luceneQuery = qb.bool().must(qb.keyword().onField("subTitle").matching("java").createQuery())
 				.must(qb.keyword().onFields("title", "subTitle").matching("javascript").createQuery()).not()
-				.must(qb.range().onField("publicationDate").from(from).to(to).createQuery())
-				.should(qb.range().onField("bookReviews.stars").above(5).createQuery()).createQuery();
+				.must(qb.range().onField("publicationDate").from(from).to(to).createQuery()).should(qb.range().onField("bookReviews.stars").above(5).createQuery()).createQuery();
 
 		// wrap Lucene query in a javax.persistence.Query
 		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
@@ -492,15 +477,18 @@ public class HibernateSearchTest {
 		assertEquals(2, result.size());
 	}
 
+	/**
+	 * Search a keyword ignoring the analyzer.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testMoreOptions() {
-		log.info("testMoreOptions");
+	public void testIgNoreAnalyzer() {
+		log.info("---------------------------------------------------------------------");
+		log.info("testIgNoreAnalyzer");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
-		org.apache.lucene.search.Query luceneQuery = qb.keyword().onFields("subTitle", "authors.name").andField("title")
-				.ignoreAnalyzer().matching("Programmers").createQuery();
+		org.apache.lucene.search.Query luceneQuery = qb.keyword().onFields("subTitle", "authors.name").andField("title").ignoreAnalyzer().matching("Programmers").createQuery();
 
 		// wrap Lucene query in a javax.persistence.Query
 		javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
@@ -523,6 +511,7 @@ public class HibernateSearchTest {
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void testProjection() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testProjection");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
@@ -553,6 +542,7 @@ public class HibernateSearchTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testFilter() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testFilter");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
@@ -579,6 +569,7 @@ public class HibernateSearchTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testFilterFactory() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testFilterFactory");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
@@ -604,6 +595,7 @@ public class HibernateSearchTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testBookReviewFactory() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testBookReviewFactory");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
@@ -620,7 +612,7 @@ public class HibernateSearchTest {
 		log.info("Record found=" + result.size());
 		result.forEach(p -> log.info(p.getTitle() + " | " + p.getSubTitle()));
 
-		// assertEquals(2, result.size());
+//		assertEquals(2, result.size());
 	}
 
 	/**
@@ -629,6 +621,7 @@ public class HibernateSearchTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testAuthorNameFilter() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testAuthorNameFilter");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
@@ -649,11 +642,12 @@ public class HibernateSearchTest {
 	}
 
 	/**
-	 * Group together a given category with count.
+	 * Groups together a given category with count.
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testDiscreetFacet() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testDiscreetFacet");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
@@ -662,8 +656,8 @@ public class HibernateSearchTest {
 		org.apache.lucene.search.Query luceneQuery = qb.all().createQuery();
 		FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
 
-		FacetingRequest authorFacet = qb.facet().name("authorFacetRequest").onField("authors.name_facet").discrete()
-				.orderedBy(FacetSortOrder.FIELD_VALUE).includeZeroCounts(false).createFacetingRequest();
+		FacetingRequest authorFacet = qb.facet().name("authorFacetRequest").onField("authors.name_facet").discrete().orderedBy(FacetSortOrder.FIELD_VALUE).includeZeroCounts(false)
+				.createFacetingRequest();
 
 		// retrieve facet manager and apply faceting request
 		FacetManager facetManager = fullTextQuery.getFacetManager();
@@ -686,8 +680,13 @@ public class HibernateSearchTest {
 		}
 	}
 
+	/**
+	 * Groups together a given category. For example we can group by author id. Then
+	 * we can load the author entity.
+	 */
 	@Test
 	public void testDiscreetFacetWithEntityData() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testDiscreetFacetWithEntityData");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
@@ -697,8 +696,8 @@ public class HibernateSearchTest {
 		FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
 
 		// define the facet
-		FacetingRequest authorFacet = qb.facet().name("authorIdFacet").onField("authors.id_facet").discrete()
-				.orderedBy(FacetSortOrder.COUNT_DESC).includeZeroCounts(false).maxFacetCount(5).createFacetingRequest();
+		FacetingRequest authorFacet = qb.facet().name("authorIdFacet").onField("authors.id_facet").discrete().orderedBy(FacetSortOrder.COUNT_DESC).includeZeroCounts(false)
+				.maxFacetCount(5).createFacetingRequest();
 
 		// retrieve facet manager and apply faceting request
 		FacetManager facetManager = fullTextQuery.getFacetManager();
@@ -730,6 +729,7 @@ public class HibernateSearchTest {
 	 */
 	@Test
 	public void testRangeFacet() {
+		log.info("---------------------------------------------------------------------");
 		log.info("testRangeFacet");
 
 		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
@@ -738,9 +738,8 @@ public class HibernateSearchTest {
 		org.apache.lucene.search.Query luceneQuery = qb.all().createQuery();
 		FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
 
-		FacetingRequest priceFacet = qb.facet().name("priceFacetRequest").onField("price").range().below(500).from(500)
-				.to(1000).above(1000).orderedBy(FacetSortOrder.COUNT_DESC).includeZeroCounts(true)
-				.createFacetingRequest();
+		FacetingRequest priceFacet = qb.facet().name("priceFacetRequest").onField("price").range().below(500).from(500).to(1000).above(1000).orderedBy(FacetSortOrder.COUNT_DESC)
+				.includeZeroCounts(true).createFacetingRequest();
 
 		// retrieve facet manager and apply faceting request
 		FacetManager facetManager = fullTextQuery.getFacetManager();

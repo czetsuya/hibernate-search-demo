@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -26,24 +27,32 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- JBoss dependency versions -->
-		<version.wildfly.maven.plugin>1.0.2.Final</version.wildfly.maven.plugin>
+		<version.wildfly.maven.plugin>1.2.2.Final</version.wildfly.maven.plugin>
 
 		<!-- Define the version of the JBoss BOMs we want to import to specify 
 			tested stacks. -->
-		<version.jboss.bom>8.2.1.Final</version.jboss.bom>
+		<version.wildfly.bom>13.0.0.Final</version.wildfly.bom>
 
 		<!-- other plugin versions -->
-		<version.compiler.plugin>3.1</version.compiler.plugin>
-		<version.surefire.plugin>2.16</version.surefire.plugin>
-		<version.war.plugin>2.5</version.war.plugin>
+		<version.compiler.plugin>3.7.0</version.compiler.plugin>
+		<version.surefire.plugin>2.22.0</version.surefire.plugin>
+		<version.war.plugin>3.2.2</version.war.plugin>
 
 		<!-- maven-compiler-plugin -->
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.source>1.8</maven.compiler.source>
-
-		<version.wildfly.bom>11.0.0.CR1</version.wildfly.bom>
+		<maven.compiler.target>10</maven.compiler.target>
+		<maven.compiler.source>10</maven.compiler.source>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>atlassian</id>
+			<url>https://maven.atlassian.com/3rdparty/</url>
+		</repository>
+		<repository>
+			<id>jboss-3rd</id>
+			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
+		</repository>
+	</repositories>
 
 	<dependencyManagement>
 		<dependencies>
@@ -64,9 +73,9 @@
 			</dependency>
 
 			<dependency>
-				<groupId>org.wildfly.bom</groupId>
-				<artifactId>jboss-javaee-7.0-with-hibernate</artifactId>
-				<version>${version.jboss.bom}</version>
+				<groupId>org.jboss.resteasy</groupId>
+				<artifactId>resteasy-jaxrs</artifactId>
+				<version>3.1.4.Final</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -94,12 +103,9 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Import the JAX-RS API, we use provided scope as the API is included 
-			in JBoss WildFly -->
 		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>jaxrs-api</artifactId>
-			<scope>provided</scope>
+			<groupId>org.jboss.spec.javax.ws.rs</groupId>
+			<artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
 		</dependency>
 
 		<!-- Import the JPA API, we use provided scope as the API is included in 
@@ -186,7 +192,7 @@
 			<artifactId>hibernate-search-orm</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.infinispan</groupId>
 			<artifactId>infinispan-directory-provider</artifactId>
@@ -202,6 +208,11 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxb-provider</artifactId>
 		</dependency>
 
 	</dependencies>
@@ -225,6 +236,15 @@
 				<groupId>org.wildfly.plugins</groupId>
 				<artifactId>wildfly-maven-plugin</artifactId>
 				<version>${version.wildfly.maven.plugin}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${version.compiler.plugin}</version>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -265,7 +285,6 @@
 				<dependency>
 					<groupId>org.wildfly.arquillian</groupId>
 					<artifactId>wildfly-arquillian-container-managed</artifactId>
-					<version>2.1.0.Final</version>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>

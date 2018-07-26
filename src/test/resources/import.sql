@@ -1,3 +1,5 @@
+CREATE SEQUENCE IF NOT EXISTS hibernate_sequence START 1;
+
 INSERT INTO BOOK (id, publication_date, title, sub_title, price, short_title) VALUES (72, '2007-06-26', '(Theory in Practice (O''Reilly))', 'Beautiful Code: Leading Programmers Explain How They Think', 500, 'Theory');
 INSERT INTO AUTHOR (id, name) VALUES (0, 'Greg Wilson');
 INSERT INTO AUTHOR (id, name) VALUES (1, 'Andy Oram');

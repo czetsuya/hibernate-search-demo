@@ -25,7 +25,7 @@ public class BookNameFactory {
 
 	@Factory
 	public Filter getFilter() {
-		log.debug("BookNameFactory.title={}", bookName);
+		log.info("BookNameFactory.title={}", bookName);
 		Query query = new TermQuery(new Term("short_title", bookName));
 		return new CachingWrapperFilter(new QueryWrapperFilter(query));
 	}
