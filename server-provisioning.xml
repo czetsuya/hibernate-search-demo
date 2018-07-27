@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server-provisioning
+	xmlns="urn:wildfly:server-provisioning:1.1"
+	copy-module-artifacts="true">
+	<feature-packs>
+
+		<feature-pack groupId="org.hibernate"
+			artifactId="hibernate-search-jbossmodules-orm" version="5.10.3.Final" />
+
+		<feature-pack groupId="org.wildfly"
+			artifactId="wildfly-feature-pack" version="13.0.0.Final">
+		</feature-pack>
+
+	</feature-packs>
+</server-provisioning>
+

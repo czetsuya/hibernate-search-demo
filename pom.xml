@@ -41,16 +41,26 @@
 		<!-- maven-compiler-plugin -->
 		<maven.compiler.target>10</maven.compiler.target>
 		<maven.compiler.source>10</maven.compiler.source>
+
+		<provisioning.config.dir>${project.basedir}${file.separator}</provisioning.config.dir>
 	</properties>
 
 	<repositories>
 		<repository>
 			<id>atlassian</id>
-			<url>https://maven.atlassian.com/3rdparty/</url>
+			<url>https://maven.atlassian.com/3rdparty</url>
 		</repository>
 		<repository>
 			<id>jboss-3rd</id>
-			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
+			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
+		</repository>
+		<repository>
+			<id>public-jboss</id>
+			<url>http://repository.jboss.org/nexus/content/groups/public-jboss</url>
+		</repository>
+		<repository>
+			<id>jboss-releases</id>
+			<url>https://repository.jboss.org/nexus/content/repositories/releases</url>
 		</repository>
 	</repositories>
 
@@ -188,9 +198,19 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-search-orm</artifactId>
-			<scope>provided</scope>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxb-provider</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>javax.persistence-api</artifactId>
+			<version>2.2</version>
 		</dependency>
 
 		<dependency>
@@ -206,13 +226,27 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-search-orm</artifactId>
+			<version>5.10.3.Final</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxb-provider</artifactId>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-search-engine</artifactId>
+			<version>5.10.3.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-search-elasticsearch</artifactId>
+			<version>5.10.3.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>5.2.2</version>
 		</dependency>
 
 	</dependencies>
@@ -222,6 +256,52 @@
 			given to the generated war, and hence the context root) -->
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
+			<plugin>
+				<groupId>org.wildfly.build</groupId>
+				<artifactId>wildfly-server-provisioning-maven-plugin</artifactId>
+				<version>1.2.6.Final</version>
+				<executions>
+					<execution>
+						<id>server-provisioning</id>
+						<goals>
+							<goal>build</goal>
+						</goals>
+						<phase>compile</phase>
+						<configuration>
+							<config-file>server-provisioning.xml</config-file>
+							<server-name>wildfly-with-updated-hibernate-search</server-name>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-checkstyle-plugin</artifactId> -->
+			<!-- <version>3.0.0</version> -->
+			<!-- <configuration> -->
+			<!-- <configLocation>wildfly-checkstyle/checkstyle.xml</configLocation> -->
+			<!-- <consoleOutput>true</consoleOutput> -->
+			<!-- <failsOnError>true</failsOnError> -->
+			<!-- <useFile /> -->
+			<!-- </configuration> -->
+			<!-- <dependencies> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.wildfly.checkstyle</groupId> -->
+			<!-- <artifactId>wildfly-checkstyle-config</artifactId> -->
+			<!-- <version>1.0.6.Final</version> -->
+			<!-- </dependency> -->
+			<!-- </dependencies> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <id>check-style</id> -->
+			<!-- <phase>compile</phase> -->
+			<!-- <goals> -->
+			<!-- <goal>checkstyle</goal> -->
+			<!-- </goals> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+			<!-- </plugin> -->
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>${version.war.plugin}</version>

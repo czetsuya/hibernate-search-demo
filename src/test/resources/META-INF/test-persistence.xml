@@ -22,8 +22,17 @@
 				value="query" />
 			<!-- <property name="hibernate.search.default.directory_provider" -->
 			<!-- value="filesystem" /> -->
+			
+			<property name="jboss.as.jpa.providerModule" value="org.hibernate:5.3" />
+			<property name="wildfly.jpa.hibernate.search.module" value="org.hibernate.search.orm:5.10.3.Final" />
+			
 			<property name="hibernate.search.default.indexBase" value="c:/temp/lucene/indexes" />
-<!-- 			<property name="wildfly.jpa.hibernate.search.module" value="org.hibernate.search.orm:5.7.1.Final"></property> -->
+			
+<!-- 			<property name="hibernate.search.default.indexmanager" value="elasticsearch" /> -->
+<!-- 			<property name="hibernate.search.default.elasticsearch.host" value="http://127.0.0.1:9200" /> -->
+<!-- 			<property name="hibernate.search.default.elasticsearch.username" value="elastic" /> -->
+<!-- 			<property name="hibernate.search.default.elasticsearch.password" value="changeme" /> -->
+<!-- 			<property name="hibernate.search.default.elasticsearch.index_schema_management_strategy" value="CREATE" /> -->
 		</properties>
 	</persistence-unit>
 </persistence>

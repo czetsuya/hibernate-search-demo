@@ -18,8 +18,14 @@
 				value="java:jboss/infinispan/broodcampHibernateSearch" />
 			<!-- <property name="hibernate.search.default.directory_provider" -->
 			<!-- value="filesystem" /> -->
-			<property name="hibernate.search.default.indexBase" value="c:/temp/lucene/indexes" />
-<!-- 			<property name="wildfly.jpa.hibernate.search.module" value="org.hibernate.search.orm:5.7.1.Final"></property> -->
+
+			<property name="jboss.as.jpa.providerModule"
+				value="org.hibernate:5.3" />
+			<property name="wildfly.jpa.hibernate.search.module"
+				value="org.hibernate.search.orm:5.10.3.Final" />
+
+			<property name="hibernate.search.default.indexBase"
+				value="c:/temp/lucene/indexes" />
 		</properties>
 	</persistence-unit>
 </persistence>

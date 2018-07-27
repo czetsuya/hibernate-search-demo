@@ -13,7 +13,8 @@
 		<!-- By default, arquillian will use the JBOSS_HOME environment variable. 
 			Alternatively, the configuration below can be uncommented. -->
 		<configuration>
-			<property name="jbossHome">C:\Java\jboss\wildfly-13.0.0.Final</property>
+			<property name="jbossHome">C:\Java\jboss\wildfly-with-updated-hibernate-search</property>
+			<property name="serverConfig">standalone.xml</property>
 		</configuration>
 	</container>
 

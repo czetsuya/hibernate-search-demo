@@ -34,6 +34,7 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -59,6 +60,8 @@ public class HibernateSearchTest {
 	@Inject
 	private EntityManager em;
 
+	private FullTextEntityManager fullTextEntityManager;
+
 	@Deployment
 	public static Archive<?> createTestArchive() {
 		return ShrinkWrap.create(WebArchive.class, "test.war")
@@ -71,6 +74,11 @@ public class HibernateSearchTest {
 				.addAsWebInfResource("test-ds.xml", "test-ds.xml");
 	}
 
+	@Before
+	public void initEM() {
+		fullTextEntityManager = Search.getFullTextEntityManager(em);
+	}
+
 	/**
 	 * Simple keyword search. Search can be perform on multiple fields.
 	 */
@@ -79,8 +87,6 @@ public class HibernateSearchTest {
 	public void testSimpleJPALuceneSearch() {
 		log.info("---------------------------------------------------------------------");
 		log.info("testSimpleJPALuceneSearch");
-
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		// create native Lucene query using the query DSL
 		// alternatively you can write the Lucene query using the Lucene query
@@ -111,8 +117,6 @@ public class HibernateSearchTest {
 		log.info("---------------------------------------------------------------------");
 		log.info("testSorting");
 
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
-
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.keyword().onFields("title", "subTitle", "authors.name").matching("Programmers").createQuery();
 
@@ -141,7 +145,6 @@ public class HibernateSearchTest {
 		log.info("testMoreLikeThis");
 
 		Book book = em.find(Book.class, 14);
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.moreLikeThis().comparingFields("title").toEntity(book).createQuery();
@@ -166,7 +169,6 @@ public class HibernateSearchTest {
 		log.info("testMoreLikeThisProjection");
 
 		Book book = em.find(Book.class, 14);
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.moreLikeThis().comparingFields("title").toEntity(book).createQuery();
@@ -186,8 +188,6 @@ public class HibernateSearchTest {
 	public void testBookReview() {
 		log.info("---------------------------------------------------------------------");
 		log.info("testBookReview");
-
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.keyword().onField("bookReviews.comments").matching("interesting").createQuery();
@@ -213,8 +213,6 @@ public class HibernateSearchTest {
 	public void testWeighted() {
 		log.info("---------------------------------------------------------------------");
 		log.info("testWeighted");
-
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.phrase().onField("title").boostedTo(2).andField("subTitle").andField("authors.name").sentence("\"Programmers\"")
@@ -257,8 +255,6 @@ public class HibernateSearchTest {
 		log.info("---------------------------------------------------------------------");
 		log.info("testHibernateSearchPaging");
 
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
-
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.keyword().onFields("title", "subTitle", "authors.name").matching("Programmers").createQuery();
 
@@ -288,8 +284,6 @@ public class HibernateSearchTest {
 		log.info("---------------------------------------------------------------------");
 		log.info("testWildCard");
 
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
-
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.keyword().wildcard().onFields("title", "subTitle").matching("*theo*").createQuery();
 
@@ -313,8 +307,6 @@ public class HibernateSearchTest {
 	public void testPhrase() {
 		log.info("---------------------------------------------------------------------");
 		log.info("testPhrase");
-
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.phrase().onField("subTitle").sentence("best practices").createQuery();
@@ -358,8 +350,6 @@ public class HibernateSearchTest {
 		log.info("---------------------------------------------------------------------");
 		log.info("testStarred");
 
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
-
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.range().onField("bookReviews.stars").from(4).to(5).excludeLimit().createQuery();
 
@@ -388,8 +378,6 @@ public class HibernateSearchTest {
 
 		Calendar c = Calendar.getInstance();
 		c.set(2000, 01, 01);
-
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.range().onField("publicationDate").above(c.getTime()).createQuery();
@@ -423,8 +411,6 @@ public class HibernateSearchTest {
 		c.set(2010, 01, 01);
 		Date to = c.getTime();
 
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
-
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.range().onField("publicationDate").from(from).to(to).createQuery();
 
@@ -457,8 +443,6 @@ public class HibernateSearchTest {
 		c.set(2010, 01, 01);
 		Date to = c.getTime();
 
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
-
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 
 		org.apache.lucene.search.Query luceneQuery = qb.bool().must(qb.keyword().onField("subTitle").matching("java").createQuery())
@@ -486,7 +470,6 @@ public class HibernateSearchTest {
 		log.info("---------------------------------------------------------------------");
 		log.info("testIgNoreAnalyzer");
 
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.keyword().onFields("subTitle", "authors.name").andField("title").ignoreAnalyzer().matching("Programmers").createQuery();
 
@@ -514,7 +497,6 @@ public class HibernateSearchTest {
 		log.info("---------------------------------------------------------------------");
 		log.info("testProjection");
 
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.range().onField("bookReviews.stars").above(4).createQuery();
 
@@ -545,13 +527,12 @@ public class HibernateSearchTest {
 		log.info("---------------------------------------------------------------------");
 		log.info("testFilter");
 
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.all().createQuery();
 
 		// wrap Lucene query in a javax.persistence.Query
 		FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
-		fullTextQuery.enableFullTextFilter("bookIdFilter");
+		fullTextQuery.enableFullTextFilter("bookIdFilter").setParameter("id", 1L);
 
 		// execute search
 		List<Book> result = (List<Book>) fullTextQuery.getResultList();
@@ -572,7 +553,6 @@ public class HibernateSearchTest {
 		log.info("---------------------------------------------------------------------");
 		log.info("testFilterFactory");
 
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.all().createQuery();
 
@@ -598,7 +578,6 @@ public class HibernateSearchTest {
 		log.info("---------------------------------------------------------------------");
 		log.info("testBookReviewFactory");
 
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.all().createQuery();
 
@@ -624,7 +603,6 @@ public class HibernateSearchTest {
 		log.info("---------------------------------------------------------------------");
 		log.info("testAuthorNameFilter");
 
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.all().createQuery();
 
@@ -650,7 +628,6 @@ public class HibernateSearchTest {
 		log.info("---------------------------------------------------------------------");
 		log.info("testDiscreetFacet");
 
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 
 		org.apache.lucene.search.Query luceneQuery = qb.all().createQuery();
@@ -689,7 +666,6 @@ public class HibernateSearchTest {
 		log.info("---------------------------------------------------------------------");
 		log.info("testDiscreetFacetWithEntityData");
 
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 
 		org.apache.lucene.search.Query luceneQuery = qb.all().createQuery();
@@ -732,7 +708,6 @@ public class HibernateSearchTest {
 		log.info("---------------------------------------------------------------------");
 		log.info("testRangeFacet");
 
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 
 		org.apache.lucene.search.Query luceneQuery = qb.all().createQuery();
