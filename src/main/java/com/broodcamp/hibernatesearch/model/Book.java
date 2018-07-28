@@ -77,7 +77,7 @@ public class Book {
 	private Integer id;
 
 	@Column(name = "TITLE")
-	@Fields({ @Field(store = Store.YES, termVector = TermVector.YES), @Field(name = "sorting_title", analyze = Analyze.NO) })
+	@Fields({ @Field(store = Store.YES, termVector = TermVector.YES) })
 	@Analyzer(definition = "customanalyzer")
 	@Boost(1.5f)
 	@SortableField

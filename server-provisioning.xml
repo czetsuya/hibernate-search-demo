@@ -5,7 +5,14 @@
 	<feature-packs>
 
 		<feature-pack groupId="org.hibernate"
+			artifactId="hibernate-search-jbossmodules-engine" version="5.10.3.Final" />
+
+		<feature-pack groupId="org.hibernate"
 			artifactId="hibernate-search-jbossmodules-orm" version="5.10.3.Final" />
+
+		<feature-pack groupId="org.hibernate"
+			artifactId="hibernate-search-jbossmodules-elasticsearch"
+			version="5.10.3.Final" />
 
 		<feature-pack groupId="org.wildfly"
 			artifactId="wildfly-feature-pack" version="13.0.0.Final">

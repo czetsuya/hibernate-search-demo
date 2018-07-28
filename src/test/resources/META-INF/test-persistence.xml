@@ -18,21 +18,34 @@
 				value="java:jboss/infinispan/broodcampHibernateSearch" />
 			<property name="hibernate.search.query.object_lookup_method"
 				value="second_level_cache" />
-			<property name="hibernate.search.query.database_retrieval_method"
+			<property
+				name="hibernate.search.query.database_retrieval_method"
 				value="query" />
+
+			<!-- Lucene -->
 			<!-- <property name="hibernate.search.default.directory_provider" -->
 			<!-- value="filesystem" /> -->
-			
-			<property name="jboss.as.jpa.providerModule" value="org.hibernate:5.3" />
-			<property name="wildfly.jpa.hibernate.search.module" value="org.hibernate.search.orm:5.10.3.Final" />
-			
-			<property name="hibernate.search.default.indexBase" value="c:/temp/lucene/indexes" />
-			
-<!-- 			<property name="hibernate.search.default.indexmanager" value="elasticsearch" /> -->
-<!-- 			<property name="hibernate.search.default.elasticsearch.host" value="http://127.0.0.1:9200" /> -->
-<!-- 			<property name="hibernate.search.default.elasticsearch.username" value="elastic" /> -->
-<!-- 			<property name="hibernate.search.default.elasticsearch.password" value="changeme" /> -->
-<!-- 			<property name="hibernate.search.default.elasticsearch.index_schema_management_strategy" value="CREATE" /> -->
+			<!-- <property name="hibernate.search.default.indexBase" -->
+			<!-- value="c:/temp/lucene/indexes" /> -->
+
+			<property name="jboss.as.jpa.providerModule"
+				value="org.hibernate:5.3" />
+			<property name="wildfly.jpa.hibernate.search.module"
+				value="org.hibernate.search.orm:5.10.3.Final" />
+
+			<property name="hibernate.search.default.indexmanager"
+				value="elasticsearch" />
+			<property name="hibernate.search.default.elasticsearch.host"
+				value="http://127.0.0.1:9200" />
+			<property
+				name="hibernate.search.default.elasticsearch.index_schema_management_strategy"
+				value="CREATE" />
+			<property
+				name="hibernate.search.default.elasticsearch.username"
+				value="elastic" />
+			<property
+				name="hibernate.search.default.elasticsearch.password"
+				value="changeme" />
 		</properties>
 	</persistence-unit>
 </persistence>

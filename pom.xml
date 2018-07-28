@@ -216,7 +216,7 @@
 		<dependency>
 			<groupId>org.infinispan</groupId>
 			<artifactId>infinispan-directory-provider</artifactId>
-			<version>9.1.0.Final</version>
+			<version>9.3.1.Final</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.hibernate</groupId>
@@ -246,7 +246,7 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>5.2.2</version>
+			<version>6.2.3</version>
 		</dependency>
 
 	</dependencies>

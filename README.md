@@ -30,3 +30,5 @@ To run
 ```
 mvn clean test -Parq-wildfly-managed
 ```
+
+You may want to check my blog entry at https://czetsuya-tech.blogspot.com/2018/07/wildfly-server-provisioning.html for Elasticsearch integration.

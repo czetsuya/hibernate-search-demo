@@ -120,7 +120,7 @@ public class HibernateSearchTest {
 		QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		org.apache.lucene.search.Query luceneQuery = qb.keyword().onFields("title", "subTitle", "authors.name").matching("Programmers").createQuery();
 
-		Sort sort = new Sort(SortField.FIELD_SCORE, new SortField("sorting_title", SortField.Type.STRING));
+		Sort sort = new Sort(SortField.FIELD_SCORE, new SortField("title", SortField.Type.STRING));
 
 		// wrap Lucene query in a javax.persistence.Query
 		FullTextQuery fullTextQueryJPA = fullTextEntityManager.createFullTextQuery(luceneQuery, Book.class);
