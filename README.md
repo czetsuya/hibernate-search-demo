@@ -1,5 +1,7 @@
 # Hibernate-search with infinispan integration demo project.
---
+==
+Author: Edward P. Legaspi
+Email: czetsuya@gmail.com
 
 This tutorial is for developers who are just beginning to learn hibernate-search and are trying to setup a demo project. Most of the codes are copied from hibernate-search documentation: https://docs.jboss.org/hibernate/stable/search/reference/en-US/html_single/
 
